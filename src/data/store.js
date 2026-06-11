@@ -1,0 +1,240 @@
+export const students = [
+  { id:1,  name:'Alexandra Chen',   email:'a.chen@educore.edu',     sid:'STU-0042', class:'11A', gpa:3.92, grade:'A', status:'Active',   enrolled:'Sep 2022', color:'#6366f1', initials:'AC' },
+  { id:2,  name:'Marcus Williams',  email:'m.williams@educore.edu', sid:'STU-0105', class:'11B', gpa:3.45, grade:'B', status:'Active',   enrolled:'Sep 2022', color:'#3b82f6', initials:'MW' },
+  { id:3,  name:'Priya Patel',      email:'p.patel@educore.edu',    sid:'STU-0237', class:'10A', gpa:3.78, grade:'A', status:'Active',   enrolled:'Sep 2023', color:'#22c55e', initials:'PP' },
+  { id:4,  name:'Daniel Kim',       email:'d.kim@educore.edu',      sid:'STU-0318', class:'12A', gpa:3.10, grade:'B', status:'Active',   enrolled:'Sep 2021', color:'#f59e0b', initials:'DK' },
+  { id:5,  name:'Sofia Martinez',   email:'s.martinez@educore.edu', sid:'STU-0421', class:'10B', gpa:2.80, grade:'C', status:'Active',   enrolled:'Sep 2023', color:'#a855f7', initials:'SM' },
+  { id:6,  name:'James Okonkwo',    email:'j.okonkwo@educore.edu',  sid:'STU-0576', class:'12B', gpa:3.60, grade:'A', status:'Active',   enrolled:'Sep 2021', color:'#14b8a6', initials:'JO' },
+  { id:7,  name:'Emily Zhang',      email:'e.zhang@educore.edu',    sid:'STU-0642', class:'11A', gpa:3.85, grade:'A', status:'Active',   enrolled:'Sep 2022', color:'#f97316', initials:'EZ' },
+  { id:8,  name:'Noah Thompson',    email:'n.thompson@educore.edu', sid:'STU-0789', class:'10C', gpa:2.20, grade:'C', status:'Inactive', enrolled:'Sep 2023', color:'#6b7280', initials:'NT' },
+  { id:9,  name:'Aisha Hassan',     email:'a.hassan@educore.edu',   sid:'STU-0834', class:'12A', gpa:3.70, grade:'A', status:'Active',   enrolled:'Sep 2021', color:'#ec4899', initials:'AH' },
+  { id:10, name:'Liam Nguyen',      email:'l.nguyen@educore.edu',   sid:'STU-0912', class:'10A', gpa:3.35, grade:'B', status:'Active',   enrolled:'Sep 2023', color:'#0ea5e9', initials:'LN' },
+]
+
+export const teachers = [
+  { id:1, name:'Dr. Sarah Johnson',  email:'s.johnson@educore.edu', tid:'TCH-001', dept:'Mathematics', subjects:'Calculus, Algebra II',  classes:4, students:120, status:'Active',   color:'#6366f1', initials:'SJ' },
+  { id:2, name:'Prof. Robert Lee',   email:'r.lee@educore.edu',     tid:'TCH-002', dept:'Sciences',     subjects:'Physics, AP Chemistry', classes:3, students:90,  status:'Active',   color:'#3b82f6', initials:'RL' },
+  { id:3, name:'Ms. Amanda Foster',  email:'a.foster@educore.edu',  tid:'TCH-003', dept:'Languages',    subjects:'English Literature',    classes:5, students:150, status:'Active',   color:'#22c55e', initials:'AF' },
+  { id:4, name:'Mr. David Park',     email:'d.park@educore.edu',    tid:'TCH-004', dept:'Humanities',   subjects:'History, Geography',    classes:4, students:110, status:'Active',   color:'#f59e0b', initials:'DP' },
+  { id:5, name:'Dr. Linda Nguyen',   email:'l.nguyen@educore.edu',  tid:'TCH-005', dept:'Sciences',     subjects:'Biology, Ecology',      classes:3, students:85,  status:'On Leave', color:'#a855f7', initials:'LN' },
+  { id:6, name:'Mr. Carlos Reyes',   email:'c.reyes@educore.edu',   tid:'TCH-006', dept:'Arts',         subjects:'Visual Arts, Music',    classes:4, students:95,  status:'Active',   color:'#14b8a6', initials:'CR' },
+]
+
+export const subjects = [
+  { id:1, name:'Advanced Mathematics', code:'MATH-401', dept:'Math',       badge:'badge-blue',   emoji:'🔢', credits:4, teacher:'Dr. Johnson', avg:78, enrolled:142 },
+  { id:2, name:'Physics',              code:'PHYS-301', dept:'Science',     badge:'badge-indigo', emoji:'⚡', credits:4, teacher:'Prof. Lee',   avg:72, enrolled:98  },
+  { id:3, name:'Chemistry',            code:'CHEM-301', dept:'Science',     badge:'badge-green',  emoji:'🧪', credits:4, teacher:'Prof. Lee',   avg:75, enrolled:105 },
+  { id:4, name:'English Literature',   code:'ENG-201',  dept:'Language',   badge:'badge-amber',  emoji:'📖', credits:3, teacher:'Ms. Foster',  avg:85, enrolled:188 },
+  { id:5, name:'World History',        code:'HIST-201', dept:'Humanities',  badge:'badge-purple', emoji:'🌍', credits:3, teacher:'Mr. Park',    avg:80, enrolled:134 },
+  { id:6, name:'Biology',              code:'BIO-301',  dept:'Science',     badge:'badge-teal',   emoji:'🧬', credits:4, teacher:'Dr. Nguyen',  avg:76, enrolled:116 },
+  { id:7, name:'Visual Arts',          code:'ARTS-101', dept:'Arts',        badge:'badge-red',    emoji:'🎨', credits:2, teacher:'Mr. Reyes',   avg:88, enrolled:62  },
+  { id:8, name:'Music Theory',         code:'MUS-201',  dept:'Arts',        badge:'badge-purple', emoji:'🎵', credits:2, teacher:'Mr. Reyes',   avg:84, enrolled:48  },
+]
+
+export const classes = [
+  { id:1, name:'7A', grade:7, teacher:'Ms. Foster', tinit:'AF', tcolor:'#22c55e', students:32, cap:35, room:'Room 101', gpa:3.42, status:'Active' },
+  { id:2, name:'7B', grade:7, teacher:'Mr. Park',   tinit:'DP', tcolor:'#f59e0b', students:30, cap:35, room:'Room 102', gpa:3.28, status:'Active' },
+  { id:3, name:'7C', grade:7, teacher:'Mr. Reyes',  tinit:'CR', tcolor:'#14b8a6', students:28, cap:35, room:'Room 103', gpa:3.15, status:'Active' },
+  { id:4, name:'8A', grade:8, teacher:'Dr. Johnson',tinit:'SJ', tcolor:'#6366f1', students:33, cap:35, room:'Room 201', gpa:3.65, status:'Active' },
+  { id:5, name:'8B', grade:8, teacher:'Prof. Lee',  tinit:'RL', tcolor:'#3b82f6', students:31, cap:35, room:'Room 202', gpa:3.41, status:'Active' },
+  { id:6, name:'9A', grade:9, teacher:'Dr. Nguyen', tinit:'LN', tcolor:'#a855f7', students:28, cap:30, room:'Room 301', gpa:3.72, status:'Active' },
+  { id:7, name:'9B', grade:9, teacher:'Dr. Johnson',tinit:'SJ', tcolor:'#6366f1', students:26, cap:30, room:'Room 302', gpa:3.55, status:'Active' },
+]
+
+export const scores = [
+
+  {
+    id: 1,
+    name: 'Alexandra Chen',
+    gender: 'ស្រី',
+    math: 92,
+    khmer: 88,
+    physics: 95,
+    chemistry: 90,
+    biology: 87,
+    geography: 84,
+    history: 82,
+    english: 96,
+    total: 714,
+    average: 89,
+    grade: 'A',
+    rank: 1,
+  },
+
+  {
+    id: 2,
+    name: 'Marcus Williams',
+    gender: 'ប្រុស',
+    math: 84,
+    khmer: 78,
+    physics: 87,
+    chemistry: 82,
+    biology: 80,
+    geography: 76,
+    history: 74,
+    english: 85,
+    total: 646,
+    average: 81,
+    grade: 'B',
+    rank: 2,
+  },
+
+  {
+    id: 3,
+    name: 'Priya Patel',
+    gender: 'ស្រី',
+    math: 90,
+    khmer: 85,
+    physics: 88,
+    chemistry: 92,
+    biology: 89,
+    geography: 83,
+    history: 81,
+    english: 90,
+    total: 698,
+    average: 87,
+    grade: 'A',
+    rank: 3,
+  },
+
+  {
+    id: 4,
+    name: 'Daniel Kim',
+    gender: 'ប្រុស',
+    math: 76,
+    khmer: 72,
+    physics: 78,
+    chemistry: 75,
+    biology: 74,
+    geography: 70,
+    history: 69,
+    english: 82,
+    total: 596,
+    average: 74,
+    grade: 'C',
+    rank: 4,
+  },
+
+  {
+    id: 5,
+    name: 'Sofia Martinez',
+    gender: 'ស្រី',
+    math: 70,
+    khmer: 74,
+    physics: 73,
+    chemistry: 75,
+    biology: 72,
+    geography: 71,
+    history: 70,
+    english: 78,
+    total: 583,
+    average: 72,
+    grade: 'C',
+    rank: 5,
+  },
+
+  {
+    id: 6,
+    name: 'James Okonkwo',
+    gender: 'ប្រុស',
+    math: 88,
+    khmer: 82,
+    physics: 91,
+    chemistry: 86,
+    biology: 90,
+    geography: 80,
+    history: 79,
+    english: 87,
+    total: 683,
+    average: 85,
+    grade: 'A',
+    rank: 6,
+  },
+
+  {
+    id: 7,
+    name: 'Emily Zhang',
+    gender: 'ស្រី',
+    math: 94,
+    khmer: 90,
+    physics: 96,
+    chemistry: 92,
+    biology: 91,
+    geography: 88,
+    history: 86,
+    english: 95,
+    total: 732,
+    average: 91,
+    grade: 'A',
+    rank: 7,
+  },
+
+  {
+    id: 8,
+    name: 'Aisha Hassan',
+    gender: 'ស្រី',
+    math: 88,
+    khmer: 84,
+    physics: 90,
+    chemistry: 85,
+    biology: 83,
+    geography: 81,
+    history: 80,
+    english: 89,
+    total: 680,
+    average: 85,
+    grade: 'A',
+    rank: 8,
+  },
+
+]
+
+export const reportScores = [
+
+  {
+    id: 1,
+    subject_name: 'Mathematics',
+    monthly_score: 89,
+    semester_score: 90,
+    average_score: 89.5,
+    grade: 'A',
+    remarks: 'Excellent',
+  },
+
+  {
+    id: 2,
+    subject_name: 'Physics',
+    monthly_score: 85,
+    semester_score: 88,
+    average_score: 86.5,
+    grade: 'A',
+    remarks: 'Very Good',
+  },
+
+  {
+    id: 3,
+    subject_name: 'Chemistry',
+    monthly_score: 78,
+    semester_score: 80,
+    average_score: 79,
+    grade: 'B',
+    remarks: 'Good',
+  },
+
+]
+
+export const activities = [
+  { id:1, text:'Score records updated for Class 11A — Mathematics final exam', time:'10 min ago',  color:'#6366f1' },
+  { id:2, text:'New student enrolled: Oliver Brown assigned to Class 10B',      time:'45 min ago',  color:'#22c55e' },
+  { id:3, text:'Semester 1 report cards generated and ready for download',      time:'2 hrs ago',   color:'#3b82f6' },
+  { id:4, text:'Mr. David Park submitted grades for HIST-201',                  time:'3 hrs ago',   color:'#f59e0b' },
+  { id:5, text:'Alert: 3 students in Class 12A have GPA below 2.0',            time:'5 hrs ago',   color:'#ef4444' },
+]
+
+export const topStudents = [
+  { name:'Alexandra Chen', class:'11A', gpa:'3.92', color:'#6366f1', initials:'AC' },
+  { name:'Emily Zhang',    class:'11A', gpa:'3.85', color:'#f97316', initials:'EZ' },
+  { name:'Priya Patel',    class:'10A', gpa:'3.78', color:'#22c55e', initials:'PP' },
+  { name:'Aisha Hassan',   class:'12A', gpa:'3.70', color:'#ec4899', initials:'AH' },
+  { name:'James Okonkwo',  class:'12B', gpa:'3.60', color:'#14b8a6', initials:'JO' },
+]
