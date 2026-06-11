@@ -1,129 +1,217 @@
 <template>
-  <div class="space-y-5">
+  <div class="space-y-4 md:space-y-5">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
       <div>
-        <h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
-          <UserGroupIcon class="w-6 h-6 text-indigo-500" />
+        <h2 class="text-xl md:text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+          <UserGroupIcon class="w-5 h-5 md:w-6 md:h-6 text-indigo-500" />
           Teachers
         </h2>
-        <p class="text-sm text-gray-500 mt-1">
+        <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
           Manage teacher information and subjects • Total: {{ teachers.length }}
         </p>
       </div>
 
-      <!-- Add Teacher -->
-      <button class="btn-primary btn gap-2" @click="openAddModal">
+      <!-- Add Teacher - Mobile friendly -->
+      <button class="btn-primary btn gap-2 text-sm md:text-base" @click="openAddModal">
         <PlusIcon class="w-4 h-4" />
-        Add Teacher
+        <span class="hidden xs:inline">Add Teacher</span>
+        <span class="xs:hidden">Add</span>
       </button>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+    <!-- Summary Cards - Responsive Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Total Teachers</p>
-          <UsersIcon class="w-4 h-4 text-gray-400" />
+          <p class="text-[10px] md:text-xs text-gray-500">Total</p>
+          <UsersIcon class="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
         </div>
-        <h3 class="text-2xl font-extrabold text-gray-900 mt-1">{{ teachers.length }}</h3>
+        <h3 class="text-xl md:text-2xl font-extrabold text-gray-900 mt-1">{{ teachers.length }}</h3>
       </div>
 
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Male</p>
-          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          <p class="text-[10px] md:text-xs text-gray-500">Male</p>
+          <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500"></span>
         </div>
-        <h3 class="text-2xl font-extrabold text-blue-600 mt-1">
+        <h3 class="text-xl md:text-2xl font-extrabold text-blue-600 mt-1">
           {{ teachers.filter(t => t.gender === 'Male').length }}
         </h3>
       </div>
 
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Female</p>
-          <span class="w-2 h-2 rounded-full bg-pink-500"></span>
+          <p class="text-[10px] md:text-xs text-gray-500">Female</p>
+          <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-pink-500"></span>
         </div>
-        <h3 class="text-2xl font-extrabold text-pink-600 mt-1">
+        <h3 class="text-xl md:text-2xl font-extrabold text-pink-600 mt-1">
           {{ teachers.filter(t => t.gender === 'Female').length }}
         </h3>
       </div>
 
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Subjects</p>
-          <BookOpenIcon class="w-4 h-4 text-gray-400" />
+          <p class="text-[10px] md:text-xs text-gray-500">Subjects</p>
+          <BookOpenIcon class="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
         </div>
-        <h3 class="text-2xl font-extrabold text-green-600 mt-1">{{ subjects.length }}</h3>
+        <h3 class="text-xl md:text-2xl font-extrabold text-green-600 mt-1">{{ subjects.length }}</h3>
       </div>
 
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100 col-span-2 md:col-span-1">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Active</p>
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <p class="text-[10px] md:text-xs text-gray-500">Active</p>
+          <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500"></span>
         </div>
-        <h3 class="text-2xl font-extrabold text-emerald-600 mt-1">{{ activeCount }}</h3>
+        <h3 class="text-xl md:text-2xl font-extrabold text-emerald-600 mt-1">{{ activeCount }}</h3>
       </div>
     </div>
 
-    <!-- Filters Bar -->
-    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-      <div class="flex flex-wrap gap-3 items-end">
-        <!-- Search -->
-        <div class="flex-1 min-w-[200px]">
-          <label class="text-xs font-semibold text-gray-500 mb-1 block">Search</label>
+    <!-- Filters Bar - Responsive Layout -->
+    <div class="bg-white rounded-2xl p-3 md:p-4 shadow-sm border border-gray-100">
+      <div class="flex flex-col gap-3">
+        <!-- Search - Full width on mobile -->
+        <div class="w-full">
+          <label class="text-[10px] md:text-xs font-semibold text-gray-500 mb-1 block">Search</label>
           <div class="relative">
-            <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
             <input
               v-model="search"
-              class="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition"
+              class="w-full pl-9 pr-3 py-1.5 md:py-2 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition text-sm md:text-base"
               placeholder="Search by name, email, or subject..."
             />
           </div>
         </div>
 
-        <!-- Gender Filter -->
-        <div class="w-32">
-          <label class="text-xs font-semibold text-gray-500 mb-1 block">Gender</label>
-          <select v-model="filterGender" class="form-input py-2">
-            <option value="">All</option>
-            <option>Male</option>
-            <option>Female</option>
-          </select>
-        </div>
+        <!-- Filter Row - Scrollable on mobile -->
+        <div class="flex flex-wrap gap-2 md:gap-3 items-end">
+          <!-- Gender Filter -->
+          <div class="flex-1 min-w-[100px]">
+            <label class="text-[10px] md:text-xs font-semibold text-gray-500 mb-1 block">Gender</label>
+            <select v-model="filterGender" class="form-input py-1.5 md:py-2 text-sm md:text-base">
+              <option value="">All</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
 
-        <!-- Subject Filter -->
-        <div class="w-40">
-          <label class="text-xs font-semibold text-gray-500 mb-1 block">Subject</label>
-          <select v-model="filterSubject" class="form-input py-2">
-            <option value="">All Subjects</option>
-            <option v-for="s in subjects" :key="s" :value="s">{{ s }}</option>
-          </select>
-        </div>
+          <!-- Subject Filter -->
+          <div class="flex-1 min-w-[120px]">
+            <label class="text-[10px] md:text-xs font-semibold text-gray-500 mb-1 block">Subject</label>
+            <select v-model="filterSubject" class="form-input py-1.5 md:py-2 text-sm md:text-base">
+              <option value="">All Subjects</option>
+              <option v-for="s in subjects" :key="s" :value="s">{{ s }}</option>
+            </select>
+          </div>
 
-        <!-- Sort By -->
-        <div class="w-36">
-          <label class="text-xs font-semibold text-gray-500 mb-1 block">Sort By</label>
-          <select v-model="sortBy" class="form-input py-2">
-            <option value="name">Name</option>
-            <option value="gender">Gender</option>
-            <option value="subject">Subject</option>
-          </select>
-        </div>
+          <!-- Sort By -->
+          <div class="flex-1 min-w-[100px]">
+            <label class="text-[10px] md:text-xs font-semibold text-gray-500 mb-1 block">Sort By</label>
+            <select v-model="sortBy" class="form-input py-1.5 md:py-2 text-sm md:text-base">
+              <option value="name">Name</option>
+              <option value="gender">Gender</option>
+              <option value="subject">Subject</option>
+            </select>
+          </div>
 
-        <!-- Reset Filters -->
-        <button
-          v-if="search || filterGender || filterSubject"
-          @click="resetFilters"
-          class="text-indigo-600 hover:text-indigo-700 text-sm font-medium py-2 px-3 rounded-xl hover:bg-indigo-50 transition"
-        >
-          Clear Filters
-        </button>
+          <!-- Reset Filters -->
+          <button
+            v-if="search || filterGender || filterSubject"
+            @click="resetFilters"
+            class="text-indigo-600 hover:text-indigo-700 text-xs md:text-sm font-medium py-1.5 md:py-2 px-2 md:px-3 rounded-xl hover:bg-indigo-50 transition whitespace-nowrap"
+          >
+            Clear
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Table -->
-    <div class="card card-shadow overflow-hidden">
+    <!-- Mobile Card View (visible on small screens) -->
+    <div class="block md:hidden space-y-3">
+      <div
+        v-for="t in paginatedTeachers"
+        :key="t.id"
+        class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+      >
+        <!-- Header with avatar and actions -->
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-sm"
+              :style="{ background: t.color }"
+            >
+              {{ t.initials }}
+            </div>
+            <div>
+              <p class="font-semibold text-gray-800">{{ t.name }}</p>
+              <p class="text-xs text-gray-400 mt-0.5">{{ t.email }}</p>
+            </div>
+          </div>
+          <div class="flex gap-1">
+            <button
+              class="p-2 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition"
+              @click="editTeacher(t)"
+            >
+              <PencilSquareIcon class="w-4 h-4" />
+            </button>
+            <button
+              class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition"
+              @click="openDeleteModal(t)"
+            >
+              <TrashIcon class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-gray-100">
+          <div>
+            <p class="text-[10px] text-gray-400 uppercase tracking-wide">Gender</p>
+            <span
+              class="inline-block mt-1 badge text-xs"
+              :class="t.gender === 'Male' ? 'badge-blue' : 'badge-pink'"
+            >
+              {{ t.gender }}
+            </span>
+          </div>
+          <div>
+            <p class="text-[10px] text-gray-400 uppercase tracking-wide">Status</p>
+            <span class="badge-green badge text-xs mt-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>
+              {{ t.status }}
+            </span>
+          </div>
+          <div>
+            <p class="text-[10px] text-gray-400 uppercase tracking-wide">Subject</p>
+            <span
+              class="inline-block mt-1 badge text-xs"
+              :class="t.subject === 'Not Assigned' ? 'badge-gray' : 'badge-indigo'"
+            >
+              {{ t.subject }}
+            </span>
+          </div>
+          <div>
+            <p class="text-[10px] text-gray-400 uppercase tracking-wide">Phone</p>
+            <div class="flex items-center gap-1 mt-1">
+              <PhoneIcon class="w-3 h-3 text-gray-400" />
+              <span class="text-sm text-gray-600">{{ t.phone || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Empty State -->
+      <div v-if="paginatedTeachers.length === 0" class="bg-white rounded-2xl p-8 text-center">
+        <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+          <UserGroupIcon class="w-8 h-8 text-gray-400" />
+        </div>
+        <p class="text-gray-500 font-medium">No teachers found</p>
+        <p class="text-xs text-gray-400 mt-1">Try adjusting your filters</p>
+      </div>
+    </div>
+
+    <!-- Desktop Table View (hidden on mobile) -->
+    <div class="hidden md:block card card-shadow overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full">
           <thead>
@@ -142,7 +230,6 @@
               :key="t.id"
               class="hover:bg-gray-50/80 transition group"
             >
-              <!-- Teacher -->
               <td class="px-4 py-3">
                 <div class="flex items-center gap-3">
                   <div
@@ -156,9 +243,7 @@
                     <p class="text-xs text-gray-400">{{ t.email }}</p>
                   </div>
                 </div>
-               </td>
-
-              <!-- Gender -->
+              </td>
               <td class="px-4 py-3">
                 <span
                   class="badge"
@@ -166,9 +251,7 @@
                 >
                   {{ t.gender }}
                 </span>
-               </td>
-
-              <!-- Subject -->
+              </td>
               <td class="px-4 py-3">
                 <span
                   class="badge"
@@ -176,25 +259,19 @@
                 >
                   {{ t.subject }}
                 </span>
-               </td>
-
-              <!-- Phone -->
+              </td>
               <td class="px-4 py-3">
                 <div class="flex items-center gap-2">
                   <PhoneIcon class="w-3.5 h-3.5 text-gray-400" />
                   <span class="text-sm text-gray-600">{{ t.phone || '—' }}</span>
                 </div>
-               </td>
-
-              <!-- Status -->
+              </td>
               <td class="px-4 py-3">
                 <span class="badge-green badge">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>
                   {{ t.status }}
                 </span>
-               </td>
-
-              <!-- Actions -->
+              </td>
               <td class="px-4 py-3">
                 <div class="flex justify-center gap-1.5">
                   <button
@@ -212,10 +289,9 @@
                     <TrashIcon class="w-4 h-4" />
                   </button>
                 </div>
-               </td>
-             </tr>
-
-            <!-- Empty State -->
+              </td>
+            </tr>
+            <!-- Desktop Empty State -->
             <tr v-if="paginatedTeachers.length === 0">
               <td colspan="6" class="px-4 py-16 text-center">
                 <div class="flex flex-col items-center justify-center">
@@ -229,97 +305,110 @@
                     Add Teacher
                   </button>
                 </div>
-               </td>
-             </tr>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
+    </div>
 
-      <!-- Pagination -->
-      <div v-if="filteredTeachers.length > 0" class="border-t border-gray-100 px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3 bg-gray-50/50">
-        <div class="text-xs text-gray-500">
-          Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ filteredTeachers.length }} teachers
-        </div>
-        <div class="flex gap-1.5">
+    <!-- Pagination - Responsive -->
+    <div v-if="filteredTeachers.length > 0" class="border-t border-gray-100 px-3 md:px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3 bg-gray-50/50 rounded-b-2xl">
+      <div class="text-[11px] md:text-xs text-gray-500 order-2 sm:order-1">
+        Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ filteredTeachers.length }} teachers
+      </div>
+      
+      <!-- Pagination Controls -->
+      <div class="flex gap-1.5 order-1 sm:order-2">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 1"
+          class="px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+          :class="currentPage === 1 ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
+        >
+          <ChevronLeftIcon class="w-3.5 h-3.5 md:w-4 md:h-4" />
+        </button>
+        
+        <!-- Simplified pagination for mobile -->
+        <div class="hidden sm:flex gap-1">
           <button
-            @click="prevPage"
-            :disabled="currentPage === 1"
-            class="px-3 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-            :class="currentPage === 1 ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
+            v-for="page in displayedPages"
+            :key="page"
+            @click="goToPage(page)"
+            class="w-7 h-7 md:w-8 md:h-8 rounded-lg text-xs md:text-sm font-medium transition"
+            :class="currentPage === page ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100'"
           >
-            <ChevronLeftIcon class="w-4 h-4" />
-          </button>
-          
-          <div class="flex gap-1">
-            <button
-              v-for="page in displayedPages"
-              :key="page"
-              @click="goToPage(page)"
-              class="w-8 h-8 rounded-lg text-sm font-medium transition"
-              :class="currentPage === page ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100'"
-            >
-              {{ page }}
-            </button>
-          </div>
-          
-          <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="px-3 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-            :class="currentPage === totalPages ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
-          >
-            <ChevronRightIcon class="w-4 h-4" />
+            {{ page }}
           </button>
         </div>
         
-        <!-- Items per page -->
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-gray-500">Show:</span>
-          <select v-model="itemsPerPage" class="text-xs border border-gray-200 rounded-lg px-2 py-1">
-            <option :value="10">10</option>
-            <option :value="20">20</option>
-option>
+        <!-- Mobile simplified page indicator -->
+        <div class="flex sm:hidden items-center gap-1 text-sm">
+          <span class="text-gray-600">Page</span>
+          <select v-model="currentPage" class="border border-gray-200 rounded-lg px-2 py-1 text-sm">
+            <option v-for="page in totalPages" :key="page" :value="page">{{ page }}</option>
           </select>
+          <span class="text-gray-500 text-xs">of {{ totalPages }}</span>
         </div>
+        
+        <button
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+          class="px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+          :class="currentPage === totalPages ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
+        >
+          <ChevronRightIcon class="w-3.5 h-3.5 md:w-4 md:h-4" />
+        </button>
+      </div>
+      
+      <!-- Items per page -->
+      <div class="flex items-center gap-2 order-3">
+        <span class="text-[11px] md:text-xs text-gray-500">Show:</span>
+        <select v-model="itemsPerPage" class="text-xs border border-gray-200 rounded-lg px-1.5 py-0.5 md:px-2 md:py-1">
+          <option :value="5">5</option>
+          <option :value="10">10</option>
+          <option :value="20">20</option>
+          <option :value="50">50</option>
+        </select>
       </div>
     </div>
 
-    <!-- Add/Edit Modal -->
+    <!-- Add/Edit Modal - Responsive -->
     <div
       v-if="showModal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 md:p-4"
       @click.self="closeModal"
     >
-      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
+      <div class="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="p-4 md:p-6">
           <!-- Header -->
-          <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center justify-between mb-4 md:mb-6">
             <div>
-              <h3 class="text-2xl font-bold text-gray-900">
+              <h3 class="text-xl md:text-2xl font-bold text-gray-900">
                 {{ editingId ? 'Edit Teacher' : 'Add Teacher' }}
               </h3>
-              <p class="text-sm text-gray-500 mt-1">
+              <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
                 {{ editingId ? 'Update teacher information' : 'Fill in the details to add a new teacher' }}
               </p>
             </div>
-            <button class="text-gray-400 hover:text-gray-700 text-xl" @click="closeModal">✕</button>
+            <button class="text-gray-400 hover:text-gray-700 text-xl p-1" @click="closeModal">✕</button>
           </div>
 
-          <!-- Form -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Form - Responsive Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <div>
               <label class="form-label required">Teacher Name</label>
-              <input v-model="form.name" type="text" class="form-input" placeholder="Full name" />
+              <input v-model="form.name" type="text" class="form-input text-sm md:text-base" placeholder="Full name" />
             </div>
 
             <div>
               <label class="form-label required">Email</label>
-              <input v-model="form.email" type="email" class="form-input" placeholder="teacher@school.com" />
+              <input v-model="form.email" type="email" class="form-input text-sm md:text-base" placeholder="teacher@school.com" />
             </div>
 
             <div>
               <label class="form-label">Gender</label>
-              <select v-model="form.gender" class="form-input">
+              <select v-model="form.gender" class="form-input text-sm md:text-base">
                 <option>Male</option>
                 <option>Female</option>
               </select>
@@ -327,12 +416,12 @@ option>
 
             <div>
               <label class="form-label">Phone</label>
-              <input v-model="form.phone" type="text" class="form-input" placeholder="012 345 678" />
+              <input v-model="form.phone" type="text" class="form-input text-sm md:text-base" placeholder="012 345 678" />
             </div>
 
-            <div>
+            <div class="md:col-span-2">
               <label class="form-label">Main Subject</label>
-              <select v-model="form.subject" class="form-input">
+              <select v-model="form.subject" class="form-input text-sm md:text-base">
                 <option value="">Select Subject</option>
                 <option v-for="s in subjects" :key="s" :value="s">{{ s }}</option>
               </select>
@@ -340,9 +429,9 @@ option>
           </div>
 
           <!-- Footer -->
-          <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
-            <button class="btn-outline btn" @click="closeModal">Cancel</button>
-            <button class="btn-primary btn" @click="saveTeacher">
+          <div class="flex justify-end gap-3 mt-6 md:mt-8 pt-4 border-t border-gray-100">
+            <button class="btn-outline btn text-sm md:text-base" @click="closeModal">Cancel</button>
+            <button class="btn-primary btn text-sm md:text-base" @click="saveTeacher">
               {{ editingId ? 'Update Teacher' : 'Save Teacher' }}
             </button>
           </div>
@@ -350,29 +439,29 @@ option>
       </div>
     </div>
 
-    <!-- Delete Modal -->
+    <!-- Delete Modal - Responsive -->
     <div
       v-if="showDeleteModal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 md:p-4"
       @click.self="closeDeleteModal"
     >
-      <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6">
+      <div class="bg-white w-full max-w-md rounded-2xl md:rounded-3xl shadow-2xl p-5 md:p-6">
         <div class="flex justify-center">
-          <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
-            <TrashIcon class="w-8 h-8 text-red-500" />
+          <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-100 flex items-center justify-center">
+            <TrashIcon class="w-7 h-7 md:w-8 md:h-8 text-red-500" />
           </div>
         </div>
-        <div class="text-center mt-5">
-          <h3 class="text-xl font-bold text-gray-900">Delete Teacher</h3>
-          <p class="text-sm text-gray-500 mt-2">
+        <div class="text-center mt-4 md:mt-5">
+          <h3 class="text-lg md:text-xl font-bold text-gray-900">Delete Teacher</h3>
+          <p class="text-xs md:text-sm text-gray-500 mt-2">
             Are you sure you want to delete
             <span class="font-semibold text-gray-800">{{ deletingTeacher?.name }}</span>?
           </p>
           <p class="text-xs text-red-400 mt-1">This action cannot be undone.</p>
         </div>
-        <div class="flex justify-center gap-3 mt-8">
-          <button class="btn-outline btn" @click="closeDeleteModal">Cancel</button>
-          <button class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-semibold transition" @click="deleteTeacher">
+        <div class="flex justify-center gap-3 mt-6 md:mt-8">
+          <button class="btn-outline btn text-sm md:text-base" @click="closeDeleteModal">Cancel</button>
+          <button class="bg-red-500 hover:bg-red-600 text-white px-4 md:px-5 py-1.5 md:py-2 rounded-xl font-semibold transition text-sm md:text-base" @click="deleteTeacher">
             Delete
           </button>
         </div>
@@ -382,7 +471,7 @@ option>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import {
   PlusIcon,
   PencilSquareIcon,
@@ -413,7 +502,7 @@ const sortBy = ref('name')
 
 // Pagination
 const currentPage = ref(1)
-const itemsPerPage = ref(20)
+const itemsPerPage = ref(10)
 
 // Modals
 const showModal = ref(false)
@@ -469,6 +558,11 @@ const filteredTeachers = computed(() => {
   })
   
   return result
+})
+
+// Reset to page 1 when filters change
+watch([search, filterGender, filterSubject, sortBy], () => {
+  currentPage.value = 1
 })
 
 // Pagination Computed
@@ -631,6 +725,7 @@ const deleteTeacher = async () => {
     closeDeleteModal()
   } catch (error) {
     console.error('Failed to delete teacher:', error)
+    alert('Failed to delete teacher')
   }
 }
 
@@ -652,6 +747,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Custom breakpoint for extra small screens */
+@media (min-width: 480px) {
+  .xs\:inline {
+    display: inline;
+  }
+  .xs\:hidden {
+    display: none;
+  }
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
