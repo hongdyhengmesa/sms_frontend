@@ -1,166 +1,166 @@
 <template>
-  <div class="space-y-5">
+  <div class="space-y-4 md:space-y-5">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
       <div>
-        <h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
-          <BookOpenIcon class="w-6 h-6 text-indigo-500" />
+        <h2 class="text-xl md:text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+          <BookOpenIcon class="w-5 h-5 md:w-6 md:h-6 text-indigo-500" />
           Subjects
         </h2>
-        <p class="text-sm text-gray-500 mt-1">
+        <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
           Manage secondary school subjects • Total: {{ subjects.length }} subjects
         </p>
       </div>
 
-      <!-- Add Button -->
-      <button class="btn-primary btn gap-2" @click="openAddModal">
+      <!-- Add Button - Mobile friendly -->
+      <button class="btn-primary btn gap-2 text-sm md:text-base" @click="openAddModal">
         <PlusIcon class="w-4 h-4" />
-        Add Subject
+        <span class="hidden xs:inline">Add Subject</span>
+        <span class="xs:hidden">Add</span>
       </button>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+    <!-- Statistics Cards - Responsive Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Total Subjects</p>
-          <BookOpenIcon class="w-4 h-4 text-gray-400" />
+          <p class="text-[10px] md:text-xs text-gray-500">Total</p>
+          <BookOpenIcon class="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
         </div>
-        <p class="text-2xl font-bold text-gray-900 mt-1">{{ subjects.length }}</p>
+        <p class="text-xl md:text-2xl font-bold text-gray-900 mt-1">{{ subjects.length }}</p>
       </div>
 
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Core</p>
-          <StarIcon class="w-4 h-4 text-gray-400" />
+          <p class="text-[10px] md:text-xs text-gray-500">Core</p>
+          <StarIcon class="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
         </div>
-        <p class="text-2xl font-bold text-indigo-600 mt-1">{{ coreCount }}</p>
+        <p class="text-xl md:text-2xl font-bold text-indigo-600 mt-1">{{ coreCount }}</p>
       </div>
 
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Science</p>
-          <BeakerIcon class="w-4 h-4 text-gray-400" />
+          <p class="text-[10px] md:text-xs text-gray-500">Science</p>
+          <BeakerIcon class="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
         </div>
-        <p class="text-2xl font-bold text-blue-600 mt-1">{{ scienceCount }}</p>
+        <p class="text-xl md:text-2xl font-bold text-blue-600 mt-1">{{ scienceCount }}</p>
       </div>
 
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Avg Score</p>
-          <ChartBarIcon class="w-4 h-4 text-gray-400" />
+          <p class="text-[10px] md:text-xs text-gray-500">Avg Score</p>
+          <ChartBarIcon class="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
         </div>
-        <p class="text-2xl font-bold text-green-600 mt-1">{{ avgPerformance }}%</p>
+        <p class="text-xl md:text-2xl font-bold text-green-600 mt-1">{{ avgPerformance }}%</p>
       </div>
 
-      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100 col-span-2 md:col-span-1">
         <div class="flex items-center justify-between">
-          <p class="text-xs text-gray-500">Total Students</p>
-          <UsersIcon class="w-4 h-4 text-gray-400" />
+          <p class="text-[10px] md:text-xs text-gray-500">Students</p>
+          <UsersIcon class="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
         </div>
-        <p class="text-2xl font-bold text-purple-600 mt-1">{{ totalStudents }}</p>
+        <p class="text-xl md:text-2xl font-bold text-purple-600 mt-1">{{ totalStudents }}</p>
       </div>
     </div>
 
-    <!-- Filters Bar -->
-    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-      <div class="flex flex-wrap gap-3 items-end">
-        <!-- Search -->
-        <div class="flex-1 min-w-[200px]">
-          <label class="text-xs font-semibold text-gray-500 mb-1 block">Search</label>
+    <!-- Filters Bar - Responsive -->
+    <div class="bg-white rounded-2xl p-3 md:p-4 shadow-sm border border-gray-100">
+      <div class="flex flex-col gap-3">
+        <!-- Search - Full width -->
+        <div class="w-full">
+          <label class="text-[10px] md:text-xs font-semibold text-gray-500 mb-1 block">Search</label>
           <div class="relative">
-            <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
             <input
               v-model="search"
-              class="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition"
+              class="w-full pl-9 pr-3 py-1.5 md:py-2 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition text-sm md:text-base"
               placeholder="Search by name, code, or teacher..."
             />
           </div>
         </div>
 
-        <!-- Category Filter -->
-        <div class="w-36">
-          <label class="text-xs font-semibold text-gray-500 mb-1 block">Category</label>
-          <select v-model="filterCategory" class="form-input py-2">
-            <option value="">All Categories</option>
-            <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
-          </select>
-        </div>
+        <!-- Filter Row - Scrollable on mobile -->
+        <div class="flex flex-wrap gap-2 md:gap-3 items-end">
+          <div class="flex-1 min-w-[110px]">
+            <label class="text-[10px] md:text-xs font-semibold text-gray-500 mb-1 block">Category</label>
+            <select v-model="filterCategory" class="form-input py-1.5 md:py-2 text-sm md:text-base">
+              <option value="">All</option>
+              <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+            </select>
+          </div>
 
-        <!-- Grade Filter -->
-        <div class="w-32">
-          <label class="text-xs font-semibold text-gray-500 mb-1 block">Grade</label>
-          <select v-model="filterGrade" class="form-input py-2">
-            <option value="">All Grades</option>
-            <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
-          </select>
-        </div>
+          <div class="flex-1 min-w-[100px]">
+            <label class="text-[10px] md:text-xs font-semibold text-gray-500 mb-1 block">Grade</label>
+            <select v-model="filterGrade" class="form-input py-1.5 md:py-2 text-sm md:text-base">
+              <option value="">All</option>
+              <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
+            </select>
+          </div>
 
-        <!-- Sort By -->
-        <div class="w-36">
-          <label class="text-xs font-semibold text-gray-500 mb-1 block">Sort By</label>
-          <select v-model="sortBy" class="form-input py-2">
-            <option value="name">Name</option>
-            <option value="avg">Average Score</option>
-            <option value="enrolled">Enrolled Students</option>
-            <option value="grade_level">Grade</option>
-          </select>
-        </div>
+          <div class="flex-1 min-w-[100px]">
+            <label class="text-[10px] md:text-xs font-semibold text-gray-500 mb-1 block">Sort By</label>
+            <select v-model="sortBy" class="form-input py-1.5 md:py-2 text-sm md:text-base">
+              <option value="name">Name</option>
+              <option value="avg">Score</option>
+              <option value="enrolled">Students</option>
+              <option value="grade_level">Grade</option>
+            </select>
+          </div>
 
-        <!-- Reset Filters -->
-        <button
-          v-if="search || filterCategory || filterGrade"
-          @click="resetFilters"
-          class="text-indigo-600 hover:text-indigo-700 text-sm font-medium py-2 px-3 rounded-xl hover:bg-indigo-50 transition"
-        >
-          Clear Filters
-        </button>
+          <button
+            v-if="search || filterCategory || filterGrade"
+            @click="resetFilters"
+            class="text-indigo-600 hover:text-indigo-700 text-xs md:text-sm font-medium py-1.5 md:py-2 px-2 md:px-3 rounded-xl hover:bg-indigo-50 transition whitespace-nowrap"
+          >
+            Clear
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Quick Stats Tags -->
-    <div class="flex flex-wrap gap-2">
-      <span class="text-xs text-gray-500">Quick Stats:</span>
-      <span v-for="stat in categoryStats" :key="stat.category" class="text-xs px-2 py-1 rounded-full" :class="getCategoryBadgeClass(stat.category)">
+    <!-- Quick Stats Tags - Scrollable on mobile -->
+    <div class="flex flex-wrap gap-1.5 md:gap-2">
+      <span class="text-[10px] md:text-xs text-gray-500">Quick Stats:</span>
+      <span v-for="stat in categoryStats" :key="stat.category" class="text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full whitespace-nowrap" :class="getCategoryBadgeClass(stat.category)">
         {{ stat.category }}: {{ stat.count }}
       </span>
     </div>
 
-    <!-- Subject Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+    <!-- Subject Cards Grid - Responsive -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
       <div
         v-for="s in paginatedSubjects"
         :key="s.id"
-        class="card card-shadow p-5 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+        class="card card-shadow p-4 md:p-5 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
       >
         <!-- Header -->
-        <div class="flex items-start justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gradient-to-br from-indigo-50 to-purple-50">
+        <div class="flex items-start justify-between mb-3 md:mb-4">
+          <div class="flex items-center gap-2 md:gap-3">
+            <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center text-xl md:text-2xl bg-gradient-to-br from-indigo-50 to-purple-50">
               {{ s.emoji }}
             </div>
             <div>
-              <p class="font-bold text-gray-900 text-sm">{{ s.name }}</p>
-              <code class="text-[11px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded mt-0.5 inline-block">{{ s.code }}</code>
+              <p class="font-bold text-gray-900 text-sm md:text-base">{{ truncateText(s.name, 20) }}</p>
+              <code class="text-[10px] md:text-[11px] text-gray-400 bg-gray-100 px-1 py-0.5 rounded mt-0.5 inline-block">{{ s.code }}</code>
             </div>
           </div>
-          <span class="badge" :class="badgeColor(s.category)">{{ s.category }}</span>
+          <span class="badge text-[10px] md:text-xs" :class="badgeColor(s.category)">{{ s.category }}</span>
         </div>
 
-        <!-- Meta Info -->
-        <div class="flex gap-4 text-xs text-gray-500 mb-4 flex-wrap">
+        <!-- Meta Info - Responsive grid -->
+        <div class="grid grid-cols-2 gap-2 text-[11px] md:text-xs text-gray-500 mb-3 md:mb-4">
           <span class="flex items-center gap-1">🎓 {{ s.grade_level }}</span>
-          <span class="flex items-center gap-1">👨‍🏫 {{ truncateText(s.teacher, 20) }}</span>
-          <span class="flex items-center gap-1">👥 {{ s.enrolled }} students</span>
+          <span class="flex items-center gap-1">👨‍🏫 {{ truncateText(s.teacher, 12) }}</span>
+          <span class="flex items-center gap-1 col-span-2">👥 {{ s.enrolled }} students</span>
         </div>
 
         <!-- Average Score Progress -->
         <div>
-          <div class="flex justify-between text-xs mb-1.5">
+          <div class="flex justify-between text-[11px] md:text-xs mb-1">
             <span class="text-gray-500 font-medium">Average Score</span>
-            <span class="font-bold" :class="getScoreTextClass(s.avg)">{{ s.avg }}%</span>
+            <span class="font-bold text-sm md:text-base" :class="getScoreTextClass(s.avg)">{{ s.avg }}%</span>
           </div>
-          <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div class="w-full h-1.5 md:h-2 bg-gray-100 rounded-full overflow-hidden">
             <div
               class="h-full rounded-full transition-all duration-700"
               :style="{ width: s.avg + '%', background: avgColor(s.avg) }"
@@ -169,102 +169,130 @@
         </div>
 
         <!-- Performance Indicator -->
-        <div class="mt-3 flex items-center justify-between">
-          <span class="text-xs text-gray-400">Performance</span>
-          <span class="text-xs font-medium" :class="getPerformanceClass(s.avg)">
+        <div class="mt-2 md:mt-3 flex items-center justify-between">
+          <span class="text-[10px] md:text-xs text-gray-400">Performance</span>
+          <span class="text-[10px] md:text-xs font-medium" :class="getPerformanceClass(s.avg)">
             {{ getPerformanceLabel(s.avg) }}
           </span>
         </div>
 
-        <!-- Actions -->
-        <div class="flex gap-2 mt-4 pt-4 border-t border-gray-100">
-          <button class="btn-outline btn btn-sm flex-1 justify-center gap-1" @click="editSubject(s)">
+        <!-- Actions - Responsive buttons -->
+        <div class="flex gap-2 mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100">
+          <button class="btn-outline btn btn-sm flex-1 justify-center gap-1 text-sm md:text-base" @click="editSubject(s)">
             <PencilSquareIcon class="w-3.5 h-3.5" />
             Edit
           </button>
-          <button class="btn-ghost btn btn-sm text-red-400 hover:bg-red-50" @click="openDeleteModal(s)">
+          <button class="btn-ghost btn btn-sm text-red-400 hover:bg-red-50 px-3 md:px-4" @click="openDeleteModal(s)">
             <TrashIcon class="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Pagination -->
+    <!-- Empty State -->
+    <div v-if="filteredSubjects.length === 0 && !loading" class="bg-white rounded-2xl p-8 md:p-12 text-center">
+      <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+        <BookOpenIcon class="w-8 h-8 text-gray-400" />
+      </div>
+      <p class="text-gray-500 font-medium">No subjects found</p>
+      <p class="text-xs text-gray-400 mt-1">Try adjusting your filters or add a new subject</p>
+      <button class="btn-primary btn mt-4" @click="openAddModal">
+        <PlusIcon class="w-4 h-4" />
+        Add Subject
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div v-if="loading" class="flex justify-center py-12">
+      <div class="w-8 h-8 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+    </div>
+
+    <!-- Pagination - Responsive -->
     <div v-if="filteredSubjects.length > 0" class="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4">
-      <div class="text-xs text-gray-500">
+      <div class="text-[11px] md:text-xs text-gray-500 order-2 sm:order-1">
         Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ filteredSubjects.length }} subjects
       </div>
-      <div class="flex gap-1.5">
+      
+      <div class="flex gap-1.5 order-1 sm:order-2">
         <button
           @click="prevPage"
           :disabled="currentPage === 1"
-          class="px-3 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
           :class="currentPage === 1 ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
         >
-          <ChevronLeftIcon class="w-4 h-4" />
+          <ChevronLeftIcon class="w-3.5 h-3.5 md:w-4 md:h-4" />
         </button>
         
-        <div class="flex gap-1">
+        <!-- Desktop pagination -->
+        <div class="hidden sm:flex gap-1">
           <button
             v-for="page in displayedPages"
             :key="page"
             @click="goToPage(page)"
-            class="w-8 h-8 rounded-lg text-sm font-medium transition"
+            class="w-7 h-7 md:w-8 md:h-8 rounded-lg text-xs md:text-sm font-medium transition"
             :class="currentPage === page ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100'"
           >
             {{ page }}
           </button>
         </div>
         
+        <!-- Mobile simplified page selector -->
+        <div class="flex sm:hidden items-center gap-1 text-sm">
+          <span class="text-gray-600">Page</span>
+          <select v-model="currentPage" class="border border-gray-200 rounded-lg px-2 py-0.5 text-sm">
+            <option v-for="page in totalPages" :key="page" :value="page">{{ page }}</option>
+          </select>
+          <span class="text-gray-500 text-xs">of {{ totalPages }}</span>
+        </div>
+        
         <button
           @click="nextPage"
           :disabled="currentPage === totalPages"
-          class="px-3 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
           :class="currentPage === totalPages ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
         >
-          <ChevronRightIcon class="w-4 h-4" />
+          <ChevronRightIcon class="w-3.5 h-3.5 md:w-4 md:h-4" />
         </button>
       </div>
       
-      <div class="flex items-center gap-2">
-        <span class="text-xs text-gray-500">Show:</span>
-        <select v-model="itemsPerPage" class="text-xs border border-gray-200 rounded-lg px-2 py-1">
+      <div class="flex items-center gap-2 order-3">
+        <span class="text-[11px] md:text-xs text-gray-500">Show:</span>
+        <select v-model="itemsPerPage" class="text-xs border border-gray-200 rounded-lg px-1.5 py-0.5 md:px-2 md:py-1">
           <option :value="6">6</option>
           <option :value="12">12</option>
           <option :value="24">24</option>
-          <option :value="48">48</option>
         </select>
       </div>
     </div>
 
-    <!-- Add/Edit Modal -->
-    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" @click.self="closeModal">
-      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
-          <div class="flex items-center justify-between mb-6">
+    <!-- Add/Edit Modal - Responsive -->
+    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 md:p-4" @click.self="closeModal">
+      <div class="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="p-4 md:p-6">
+          <div class="flex items-center justify-between mb-4 md:mb-6">
             <div>
-              <h3 class="text-2xl font-bold text-gray-900">{{ editingId ? 'Edit Subject' : 'Add Subject' }}</h3>
-              <p class="text-sm text-gray-500 mt-1">{{ editingId ? 'Update subject information' : 'Create a new subject' }}</p>
+              <h3 class="text-xl md:text-2xl font-bold text-gray-900">{{ editingId ? 'Edit Subject' : 'Add Subject' }}</h3>
+              <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">{{ editingId ? 'Update subject information' : 'Create a new subject' }}</p>
             </div>
-            <button class="text-gray-400 hover:text-gray-700 text-xl" @click="closeModal">✕</button>
+            <button class="text-gray-400 hover:text-gray-700 text-xl p-1" @click="closeModal">✕</button>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <div>
               <label class="form-label required">Subject Name</label>
-              <input v-model="form.name" type="text" class="form-input" placeholder="Mathematics" />
+              <input v-model="form.name" type="text" class="form-input text-sm md:text-base" placeholder="Mathematics" />
               <p v-if="errors.name" class="text-red-500 text-xs mt-1">{{ errors.name }}</p>
             </div>
 
             <div>
               <label class="form-label required">Subject Code</label>
-              <input v-model="form.code" type="text" class="form-input" placeholder="MATH101" />
+              <input v-model="form.code" type="text" class="form-input text-sm md:text-base" placeholder="MATH101" />
               <p v-if="errors.code" class="text-red-500 text-xs mt-1">{{ errors.code }}</p>
             </div>
 
             <div>
               <label class="form-label required">Category</label>
-              <select v-model="form.category" class="form-input">
+              <select v-model="form.category" class="form-input text-sm md:text-base">
                 <option value="">Select Category</option>
                 <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
               </select>
@@ -273,7 +301,7 @@
 
             <div>
               <label class="form-label required">Grade Level</label>
-              <select v-model="form.grade_level" class="form-input">
+              <select v-model="form.grade_level" class="form-input text-sm md:text-base">
                 <option value="">Select Grade</option>
                 <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
               </select>
@@ -282,68 +310,68 @@
 
             <div>
               <label class="form-label">Teacher</label>
-              <input v-model="form.teacher" type="text" class="form-input" placeholder="Mr. Dara" />
+              <input v-model="form.teacher" type="text" class="form-input text-sm md:text-base" placeholder="Mr. Dara" />
             </div>
 
             <div>
               <label class="form-label">Enrolled Students</label>
-              <input v-model.number="form.enrolled" type="number" min="0" class="form-input" />
+              <input v-model.number="form.enrolled" type="number" min="0" class="form-input text-sm md:text-base" />
             </div>
 
             <div>
               <label class="form-label">Average Score (0-100)</label>
-              <input v-model.number="form.avg" type="number" min="0" max="100" class="form-input" />
+              <input v-model.number="form.avg" type="number" min="0" max="100" class="form-input text-sm md:text-base" />
             </div>
 
             <div>
               <label class="form-label">Emoji</label>
-              <input v-model="form.emoji" type="text" class="form-input" placeholder="📘" />
+              <input v-model="form.emoji" type="text" class="form-input text-sm md:text-base" placeholder="📘" />
             </div>
           </div>
 
-          <!-- Preview Card -->
-          <div v-if="form.name && form.category" class="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl">
-            <p class="text-xs text-gray-500 mb-2">Preview</p>
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-xl">{{ form.emoji || '📘' }}</div>
-              <div>
-                <p class="font-bold text-gray-900">{{ form.name || 'Subject Name' }}</p>
-                <p class="text-xs text-gray-500">{{ form.code || 'CODE' }} • {{ form.category || 'Category' }} • Grade {{ form.grade_level || '?' }}</p>
+          <!-- Preview Card - Responsive -->
+          <div v-if="form.name && form.category" class="mt-5 md:mt-6 p-3 md:p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl md:rounded-2xl">
+            <p class="text-[10px] md:text-xs text-gray-500 mb-2">Preview</p>
+            <div class="flex items-center gap-2 md:gap-3">
+              <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white flex items-center justify-center text-base md:text-xl">{{ form.emoji || '📘' }}</div>
+              <div class="flex-1">
+                <p class="font-bold text-gray-900 text-sm md:text-base">{{ truncateText(form.name, 25) || 'Subject Name' }}</p>
+                <p class="text-[10px] md:text-xs text-gray-500">{{ form.code || 'CODE' }} • {{ form.category || 'Category' }} • Grade {{ form.grade_level || '?' }}</p>
               </div>
-              <div class="ml-auto text-right">
-                <p class="text-xs text-gray-500">Avg Score</p>
-                <p class="text-xl font-bold" :class="getScoreTextClass(form.avg)">{{ form.avg || 0 }}%</p>
+              <div class="text-right">
+                <p class="text-[10px] md:text-xs text-gray-500">Avg Score</p>
+                <p class="text-base md:text-xl font-bold" :class="getScoreTextClass(form.avg)">{{ form.avg || 0 }}%</p>
               </div>
             </div>
           </div>
 
-          <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
-            <button class="btn-outline btn" @click="closeModal">Cancel</button>
-            <button class="btn-primary btn" @click="saveSubject">{{ editingId ? 'Update Subject' : 'Save Subject' }}</button>
+          <div class="flex justify-end gap-3 mt-6 md:mt-8 pt-4 border-t border-gray-100">
+            <button class="btn-outline btn text-sm md:text-base" @click="closeModal">Cancel</button>
+            <button class="btn-primary btn text-sm md:text-base" @click="saveSubject">{{ editingId ? 'Update Subject' : 'Save Subject' }}</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Delete Modal -->
-    <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" @click.self="closeDeleteModal">
-      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+    <!-- Delete Modal - Responsive -->
+    <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 md:p-4" @click.self="closeDeleteModal">
+      <div class="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-md p-5 md:p-6">
         <div class="flex justify-center">
-          <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
-            <TrashIcon class="w-8 h-8 text-red-500" />
+          <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-100 flex items-center justify-center">
+            <TrashIcon class="w-7 h-7 md:w-8 md:h-8 text-red-500" />
           </div>
         </div>
-        <div class="text-center mt-5">
-          <h3 class="text-xl font-bold text-gray-900">Delete Subject</h3>
-          <p class="text-sm text-gray-500 mt-2">
+        <div class="text-center mt-4 md:mt-5">
+          <h3 class="text-lg md:text-xl font-bold text-gray-900">Delete Subject</h3>
+          <p class="text-xs md:text-sm text-gray-500 mt-2">
             Are you sure you want to delete
             <span class="font-semibold text-gray-800">{{ deletingSubject?.name }}</span>?
           </p>
-          <p class="text-xs text-red-400 mt-1">This action cannot be undone.</p>
+          <p class="text-[11px] md:text-xs text-red-400 mt-1">This action cannot be undone.</p>
         </div>
-        <div class="flex justify-center gap-3 mt-8">
-          <button class="btn-outline btn" @click="closeDeleteModal">Cancel</button>
-          <button class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-semibold transition" @click="confirmDelete">Delete</button>
+        <div class="flex justify-center gap-3 mt-6 md:mt-8">
+          <button class="btn-outline btn text-sm md:text-base" @click="closeDeleteModal">Cancel</button>
+          <button class="bg-red-500 hover:bg-red-600 text-white px-4 md:px-5 py-1.5 md:py-2 rounded-xl font-semibold transition text-sm md:text-base" @click="confirmDelete">Delete</button>
         </div>
       </div>
     </div>
@@ -351,7 +379,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import {
   PlusIcon,
   PencilSquareIcon,
@@ -409,6 +437,11 @@ const form = ref({
   emoji: '📘',
 })
 
+// Reset to page 1 when filters change
+watch([search, filterCategory, filterGrade, sortBy], () => {
+  currentPage.value = 1
+})
+
 // Computed - Statistics
 const coreCount = computed(() => subjects.value.filter(s => s.category === 'Core').length)
 const scienceCount = computed(() => subjects.value.filter(s => s.category === 'Science').length)
@@ -433,7 +466,7 @@ const filteredSubjects = computed(() => {
     const matchSearch = !search.value ||
       s.name.toLowerCase().includes(search.value.toLowerCase()) ||
       s.code.toLowerCase().includes(search.value.toLowerCase()) ||
-      s.teacher.toLowerCase().includes(search.value.toLowerCase())
+      (s.teacher && s.teacher.toLowerCase().includes(search.value.toLowerCase()))
     const matchCategory = !filterCategory.value || s.category === filterCategory.value
     const matchGrade = !filterGrade.value || s.grade_level === filterGrade.value
     return matchSearch && matchCategory && matchGrade
@@ -668,6 +701,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Custom breakpoint for extra small screens */
+@media (min-width: 480px) {
+  .xs\:inline {
+    display: inline;
+  }
+  .xs\:hidden {
+    display: none;
+  }
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -736,5 +779,13 @@ onMounted(() => {
 }
 .card-shadow {
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 0.8s linear infinite;
 }
 </style>

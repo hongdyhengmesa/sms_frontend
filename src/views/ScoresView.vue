@@ -1,25 +1,25 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-4 md:space-y-6">
     <!-- Custom Alert Modal -->
-    <div v-if="alertModal.show" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn" @click.self="closeAlertModal">
-      <div class="bg-white rounded-2xl p-6 w-full max-w-md transform animate-slideUp">
+    <div v-if="alertModal.show" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 md:p-4 animate-fadeIn" @click.self="closeAlertModal">
+      <div class="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 w-full max-w-md transform animate-slideUp">
         <div class="text-center">
-          <div class="flex justify-center mb-4">
-            <div class="w-16 h-16 rounded-full flex items-center justify-center" 
+          <div class="flex justify-center mb-3 md:mb-4">
+            <div class="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center" 
               :class="alertModal.type === 'success' ? 'bg-green-100' : 'bg-red-100'">
-              <svg v-if="alertModal.type === 'success'" class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg v-if="alertModal.type === 'success'" class="w-7 h-7 md:w-8 md:h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
-              <svg v-else class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg v-else class="w-7 h-7 md:w-8 md:h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </div>
           </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">{{ alertModal.title }}</h3>
-          <p class="text-gray-500">{{ alertModal.message }}</p>
+          <h3 class="text-lg md:text-xl font-bold text-gray-900 mb-2">{{ alertModal.title }}</h3>
+          <p class="text-sm md:text-base text-gray-500">{{ alertModal.message }}</p>
         </div>
-        <div class="flex justify-center mt-6">
-          <button class="px-6 py-2 rounded-xl font-semibold transition-all" 
+        <div class="flex justify-center mt-5 md:mt-6">
+          <button class="px-5 md:px-6 py-2 rounded-xl font-semibold transition-all text-sm md:text-base" 
             :class="alertModal.type === 'success' ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-red-600 text-white hover:bg-red-700'"
             @click="closeAlertModal">
             Got it
@@ -28,34 +28,36 @@
       </div>
     </div>
 
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <!-- Header - Responsive -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
       <div>
-        <h2 class="text-3xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+        <h2 class="text-2xl md:text-3xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
           Score Management
         </h2>
-        <p class="text-gray-500 mt-1">Record and manage student academic scores</p>
+        <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">Record and manage student academic scores</p>
       </div>
 
-      <!-- Actions -->
-      <div class="flex items-center gap-3">
+      <!-- Actions - Responsive wrap -->
+      <div class="flex flex-wrap items-center gap-2 md:gap-3">
         <!-- Hidden CSV Import -->
         <input ref="csvInput" type="file" accept=".csv" class="hidden" @change="importCSV" />
 
         <!-- Import CSV -->
-        <button class="btn-outline btn gap-2" @click="csvInput.click()">
+        <button class="btn-outline btn gap-1.5 md:gap-2 text-sm md:text-base" @click="csvInput.click()">
           <ArrowUpTrayIcon class="w-4 h-4" />
-          Import CSV
+          <span class="hidden xs:inline">Import CSV</span>
+          <span class="xs:hidden">Import</span>
         </button>
 
         <!-- Export by Class Dropdown -->
         <div class="relative">
           <button
-            class="btn-primary btn gap-2 shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+            class="btn-primary btn gap-1.5 md:gap-2 shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-sm md:text-base"
             @click="showExportMenu = !showExportMenu"
           >
             <ArrowDownTrayIcon class="w-4 h-4" />
-            Export by Class
+            <span class="hidden xs:inline">Export</span>
+            <span class="xs:hidden">Exp</span>
           </button>
 
           <!-- Export Menu -->
@@ -85,35 +87,36 @@
           </div>
         </div>
 
-        <!-- Add -->
-        <button class="btn-primary btn gap-2 shadow-lg hover:shadow-xl transition-all" @click="openAddModal">
+        <!-- Add Score -->
+        <button class="btn-primary btn gap-1.5 md:gap-2 shadow-lg hover:shadow-xl transition-all text-sm md:text-base" @click="openAddModal">
           <PlusIcon class="w-4 h-4" />
-          Add Score
+          <span class="hidden xs:inline">Add Score</span>
+          <span class="xs:hidden">Add</span>
         </button>
       </div>
     </div>
 
-    <!-- Class Filter Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+    <!-- Class Filter Cards - Responsive Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 md:gap-3">
       <div
         v-for="c in classList"
         :key="c"
         @click="selectedClass = c"
-        class="bg-white rounded-2xl border p-3 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105"
+        class="bg-white rounded-xl md:rounded-2xl border p-2 md:p-3 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105"
         :class="selectedClass === c ? 'border-indigo-500 bg-gradient-to-br from-indigo-50 to-indigo-100 shadow-md' : 'border-gray-100 hover:border-indigo-200'"
       >
-        <h3 class="text-lg font-black text-gray-800">{{ c }}</h3>
-        <p class="text-xs text-gray-500 mt-1">{{ getClassCount(c) }} Students</p>
+        <h3 class="text-base md:text-lg font-black text-gray-800">{{ c }}</h3>
+        <p class="text-[10px] md:text-xs text-gray-500 mt-0.5 md:mt-1">{{ getClassCount(c) }} Students</p>
       </div>
     </div>
 
-    <!-- Stats & Filters -->
-    <div class="flex flex-col md:flex-row gap-3 items-center">
+    <!-- Stats & Filters - Responsive -->
+    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
       <div class="relative flex-1">
         <input
           v-model="search"
           type="text"
-          class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition"
+          class="w-full pl-10 pr-4 py-2 md:py-2.5 rounded-xl border border-gray-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition text-sm md:text-base"
           placeholder="Search student by name..."
         />
         <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,30 +124,133 @@
         </svg>
       </div>
 
-      <div class="flex gap-3">
-        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl px-4 py-2">
-          <p class="text-xs text-blue-600 font-semibold">TOTAL</p>
-          <p class="text-2xl font-black text-blue-700">{{ filtered.length }}</p>
+      <div class="flex flex-wrap gap-2 md:gap-3">
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl px-3 md:px-4 py-1.5 md:py-2">
+          <p class="text-[10px] md:text-xs text-blue-600 font-semibold">TOTAL</p>
+          <p class="text-xl md:text-2xl font-black text-blue-700">{{ filtered.length }}</p>
         </div>
         
-        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl px-4 py-2">
-          <p class="text-xs text-green-600 font-semibold">AVERAGE</p>
-          <p class="text-2xl font-black text-green-700">{{ calculateOverallAverage() }}%</p>
+        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl px-3 md:px-4 py-1.5 md:py-2">
+          <p class="text-[10px] md:text-xs text-green-600 font-semibold">AVERAGE</p>
+          <p class="text-xl md:text-2xl font-black text-green-700">{{ calculateOverallAverage() }}%</p>
         </div>
 
-        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl px-4 py-2">
-          <p class="text-xs text-purple-600 font-semibold">PASS RATE</p>
-          <p class="text-2xl font-black text-purple-700">{{ calculatePassRate() }}%</p>
+        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl px-3 md:px-4 py-1.5 md:py-2">
+          <p class="text-[10px] md:text-xs text-purple-600 font-semibold">PASS RATE</p>
+          <p class="text-xl md:text-2xl font-black text-purple-700">{{ calculatePassRate() }}%</p>
         </div>
 
-        <button v-if="selectedClass" class="btn-outline btn" @click="selectedClass = ''">
-          Clear Filter
+        <button v-if="selectedClass" class="btn-outline btn text-sm md:text-base px-3 md:px-4" @click="selectedClass = ''">
+          Clear
         </button>
       </div>
     </div>
 
-    <!-- Table -->
-    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+    <!-- Mobile Card View (visible on small screens) -->
+    <div class="block md:hidden space-y-3">
+      <div
+        v-for="(sc, index) in paginatedScores"
+        :key="sc.id"
+        class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+      >
+        <!-- Header with rank and actions -->
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+              {{ sc.name.charAt(0) }}
+            </div>
+            <div>
+              <p class="font-semibold text-gray-800">{{ truncateText(sc.name, 20) }}</p>
+              <p class="text-xs text-gray-500">{{ sc.class }} • {{ sc.gender }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="inline-flex items-center gap-1 font-bold text-sm">
+              <span v-if="sc.rank === 1" class="text-yellow-500">🥇</span>
+              <span v-else-if="sc.rank === 2" class="text-gray-400">🥈</span>
+              <span v-else-if="sc.rank === 3" class="text-amber-600">🥉</span>
+              #{{ sc.rank }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Score Grid -->
+        <div class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-100">
+          <div class="flex justify-between">
+            <span class="text-xs text-gray-500">Math:</span>
+            <span class="text-xs font-medium" :class="getScoreColor(sc.math, 100)">{{ sc.math }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-xs text-gray-500">Khmer:</span>
+            <span class="text-xs font-medium" :class="getScoreColor(sc.khmer, 100)">{{ sc.khmer }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-xs text-gray-500">Physics:</span>
+            <span class="text-xs font-medium" :class="getScoreColor(sc.physics, 50)">{{ sc.physics }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-xs text-gray-500">Chemistry:</span>
+            <span class="text-xs font-medium" :class="getScoreColor(sc.chemistry, 50)">{{ sc.chemistry }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-xs text-gray-500">Biology:</span>
+            <span class="text-xs font-medium" :class="getScoreColor(sc.biology, 50)">{{ sc.biology }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-xs text-gray-500">Geography:</span>
+            <span class="text-xs font-medium" :class="getScoreColor(sc.geography, 50)">{{ sc.geography }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-xs text-gray-500">History:</span>
+            <span class="text-xs font-medium" :class="getScoreColor(sc.history, 50)">{{ sc.history }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-xs text-gray-500">English:</span>
+            <span class="text-xs font-medium" :class="getScoreColor(sc.english, 50)">{{ sc.english }}</span>
+          </div>
+        </div>
+
+        <!-- Total and Average -->
+        <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+          <div>
+            <p class="text-[10px] text-gray-400">Total Score</p>
+            <p class="font-bold text-gray-900">{{ sc.total }}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] text-gray-400">Average</p>
+            <p class="font-bold" :class="getAverageColor(sc.average)">{{ sc.average }}%</p>
+          </div>
+          <div>
+            <span class="px-2 py-1 rounded-full text-[10px] font-bold" :class="gradeClass(sc.grade)">
+              {{ sc.grade }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-2 mt-3 pt-3 border-t border-gray-100">
+          <button class="flex-1 btn-outline btn-sm justify-center gap-1 text-sm py-2" @click="editScore(sc)">
+            <PencilSquareIcon class="w-4 h-4" />
+            Edit
+          </button>
+          <button class="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600 transition text-sm" @click="openDeleteModal(sc.id)">
+            <TrashIcon class="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Empty State -->
+      <div v-if="filtered.length === 0" class="bg-white rounded-2xl p-8 text-center">
+        <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <p class="text-gray-500 font-medium">No students found</p>
+        <p class="text-xs text-gray-400 mt-1">Try adjusting your search or filter</p>
+      </div>
+    </div>
+
+    <!-- Desktop Table View (hidden on mobile) -->
+    <div class="hidden md:block bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead class="bg-gradient-to-r from-gray-50 to-gray-100 text-gray-500 uppercase text-xs sticky top-0">
@@ -214,17 +320,17 @@
               </td>
               <td class="px-4 py-3">
                 <div class="flex items-center justify-center gap-2">
-                  <button class="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-indigo-50 hover:border-indigo-300 transition group" @click="editScore(sc)">
+                  <button class="w-8 h-8 md:w-9 md:h-9 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-indigo-50 hover:border-indigo-300 transition group" @click="editScore(sc)">
                     <PencilSquareIcon class="w-4 h-4 text-indigo-600 group-hover:scale-110 transition" />
                   </button>
-                  <button class="w-9 h-9 rounded-xl bg-red-500 flex items-center justify-center hover:bg-red-600 transition group shadow-sm" @click="openDeleteModal(sc.id)">
+                  <button class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-red-500 flex items-center justify-center hover:bg-red-600 transition group shadow-sm" @click="openDeleteModal(sc.id)">
                     <TrashIcon class="w-4 h-4 text-white group-hover:scale-110 transition" />
                   </button>
                 </div>
               </td>
             </tr>
 
-            <!-- Empty State -->
+            <!-- Desktop Empty State -->
             <tr v-if="filtered.length === 0">
               <td colspan="17" class="text-center py-16">
                 <div class="text-gray-400">
@@ -239,102 +345,112 @@
           </tbody>
         </table>
       </div>
+    </div>
 
-      <!-- Pagination -->
-      <div v-if="filtered.length > 0" class="border-t border-gray-100 px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3 bg-gray-50/50">
-        <div class="text-xs text-gray-500">
-          Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ filtered.length }} students
-        </div>
-        <div class="flex gap-1.5">
+    <!-- Pagination - Responsive -->
+    <div v-if="filtered.length > 0" class="border-t border-gray-100 px-3 md:px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3 bg-gray-50/50 rounded-b-3xl">
+      <div class="text-[11px] md:text-xs text-gray-500 order-2 sm:order-1">
+        Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ filtered.length }} students
+      </div>
+      
+      <div class="flex gap-1.5 order-1 sm:order-2">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 1"
+          class="px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+          :class="currentPage === 1 ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
+        >
+          <ChevronLeftIcon class="w-3.5 h-3.5 md:w-4 md:h-4" />
+        </button>
+        
+        <!-- Desktop pagination -->
+        <div class="hidden sm:flex gap-1">
           <button
-            @click="prevPage"
-            :disabled="currentPage === 1"
-            class="px-3 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-            :class="currentPage === 1 ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
+            v-for="page in displayedPages"
+            :key="page"
+            @click="goToPage(page)"
+            class="w-7 h-7 md:w-8 md:h-8 rounded-lg text-xs md:text-sm font-medium transition"
+            :class="currentPage === page ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100'"
           >
-            <ChevronLeftIcon class="w-4 h-4" />
-          </button>
-          
-          <div class="flex gap-1">
-            <button
-              v-for="page in displayedPages"
-              :key="page"
-              @click="goToPage(page)"
-              class="w-8 h-8 rounded-lg text-sm font-medium transition"
-              :class="currentPage === page ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100'"
-            >
-              {{ page }}
-            </button>
-          </div>
-          
-          <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="px-3 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-            :class="currentPage === totalPages ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
-          >
-            <ChevronRightIcon class="w-4 h-4" />
+            {{ page }}
           </button>
         </div>
         
-        <!-- Items per page -->
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-gray-500">Show:</span>
-          <select v-model="itemsPerPage" class="text-xs border border-gray-200 rounded-lg px-2 py-1">
-            <option :value="10">10</option>
-            <option :value="20">20</option>
-            <option :value="50">50</option>
-            <option :value="100">100</option>
+        <!-- Mobile simplified page selector -->
+        <div class="flex sm:hidden items-center gap-1 text-sm">
+          <span class="text-gray-600">Page</span>
+          <select v-model="currentPage" class="border border-gray-200 rounded-lg px-2 py-0.5 text-sm">
+            <option v-for="page in totalPages" :key="page" :value="page">{{ page }}</option>
           </select>
+          <span class="text-gray-500 text-xs">of {{ totalPages }}</span>
         </div>
+        
+        <button
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+          class="px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+          :class="currentPage === totalPages ? 'text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600'"
+        >
+          <ChevronRightIcon class="w-3.5 h-3.5 md:w-4 md:h-4" />
+        </button>
+      </div>
+      
+      <div class="flex items-center gap-2 order-3">
+        <span class="text-[11px] md:text-xs text-gray-500">Show:</span>
+        <select v-model="itemsPerPage" class="text-xs border border-gray-200 rounded-lg px-1.5 py-0.5 md:px-2 md:py-1">
+          <option :value="5">5</option>
+          <option :value="10">10</option>
+          <option :value="20">20</option>
+          <option :value="50">50</option>
+        </select>
       </div>
     </div>
 
-    <!-- Add/Edit Modal -->
-    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn" @click.self="closeModal">
-      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
+    <!-- Add/Edit Modal - Responsive -->
+    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 md:p-4 animate-fadeIn" @click.self="closeModal">
+      <div class="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div class="p-4 md:p-6">
           <!-- Header -->
-          <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+          <div class="flex items-center justify-between mb-4 md:mb-6 pb-4 border-b border-gray-100 sticky top-0 bg-white z-10">
             <div>
-              <h3 class="text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h3 class="text-xl md:text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 {{ editingId ? 'Edit Score' : 'Add Score' }}
               </h3>
-              <p class="text-sm text-gray-500 mt-1">Fill in the details to {{ editingId ? 'update' : 'add' }} student scores</p>
+              <p class="text-xs md:text-sm text-gray-500 mt-0.5">Fill in the details to {{ editingId ? 'update' : 'add' }} student scores</p>
             </div>
-            <button class="text-gray-400 hover:text-gray-700 text-2xl hover:rotate-90 transition-transform duration-200" @click="closeModal">✕</button>
+            <button class="text-gray-400 hover:text-gray-700 text-xl md:text-2xl hover:rotate-90 transition-transform duration-200" @click="closeModal">✕</button>
           </div>
 
           <!-- Preview Card -->
-          <div v-if="form.name && form.class" class="mb-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl">
-            <div class="flex justify-between items-center">
+          <div v-if="form.name && form.class" class="mb-5 md:mb-6 p-3 md:p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl md:rounded-2xl">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
               <div>
-                <p class="text-xs text-gray-500">Preview</p>
-                <p class="text-lg font-bold text-gray-800">{{ form.name }} - {{ form.class }}</p>
+                <p class="text-[10px] md:text-xs text-gray-500">Preview</p>
+                <p class="text-base md:text-lg font-bold text-gray-800">{{ truncateText(form.name, 30) }} - {{ form.class }}</p>
               </div>
-              <div class="text-right">
-                <p class="text-xs text-gray-500">Calculated Average</p>
-                <p class="text-2xl font-bold" :class="getAverageColor(calculatePreviewAverage())">
+              <div class="text-left sm:text-right">
+                <p class="text-[10px] md:text-xs text-gray-500">Calculated Average</p>
+                <p class="text-xl md:text-2xl font-bold" :class="getAverageColor(calculatePreviewAverage())">
                   {{ calculatePreviewAverage() }}%
                 </p>
-                <span class="px-2 py-0.5 rounded-full text-xs font-bold" :class="gradeClass(calculatePreviewGrade())">
+                <span class="px-2 py-0.5 rounded-full text-[10px] md:text-xs font-bold" :class="gradeClass(calculatePreviewGrade())">
                   {{ calculatePreviewGrade() }}
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- Form -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Form - Responsive Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
             <div>
               <label class="form-label font-semibold required">Student Name</label>
-              <input v-model="form.name" type="text" class="form-input" :class="{'border-red-500': formErrors.name}" placeholder="Enter student name" @blur="validateField('name')" />
+              <input v-model="form.name" type="text" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.name}" placeholder="Enter student name" @blur="validateField('name')" />
               <p v-if="formErrors.name" class="text-xs text-red-500 mt-1">{{ formErrors.name }}</p>
             </div>
 
             <div>
               <label class="form-label font-semibold required">Class</label>
-              <select v-model="form.class" class="form-input" :class="{'border-red-500': formErrors.class}" @change="validateField('class')">
+              <select v-model="form.class" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.class}" @change="validateField('class')">
                 <option value="">Select Class</option>
                 <option v-for="c in classList" :key="c" :value="c">{{ c }}</option>
               </select>
@@ -343,7 +459,7 @@
 
             <div>
               <label class="form-label font-semibold required">Gender</label>
-              <select v-model="form.gender" class="form-input" :class="{'border-red-500': formErrors.gender}" @change="validateField('gender')">
+              <select v-model="form.gender" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.gender}" @change="validateField('gender')">
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -354,64 +470,64 @@
             <!-- Math -->
             <div>
               <label class="form-label font-semibold required">Mathematics (0-100)</label>
-              <input v-model.number="form.math" type="number" min="0" max="100" class="form-input" :class="{'border-red-500': formErrors.math}" @input="validateField('math')" />
+              <input v-model.number="form.math" type="number" min="0" max="100" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.math}" @input="validateField('math')" />
               <p v-if="formErrors.math" class="text-xs text-red-500 mt-1">{{ formErrors.math }}</p>
             </div>
 
             <!-- Khmer -->
             <div>
               <label class="form-label font-semibold required">Khmer (0-100)</label>
-              <input v-model.number="form.khmer" type="number" min="0" max="100" class="form-input" :class="{'border-red-500': formErrors.khmer}" @input="validateField('khmer')" />
+              <input v-model.number="form.khmer" type="number" min="0" max="100" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.khmer}" @input="validateField('khmer')" />
               <p v-if="formErrors.khmer" class="text-xs text-red-500 mt-1">{{ formErrors.khmer }}</p>
             </div>
 
             <!-- Physics -->
             <div>
               <label class="form-label font-semibold required">Physics (0-50)</label>
-              <input v-model.number="form.physics" type="number" min="0" max="50" class="form-input" :class="{'border-red-500': formErrors.physics}" @input="validateField('physics')" />
+              <input v-model.number="form.physics" type="number" min="0" max="50" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.physics}" @input="validateField('physics')" />
               <p v-if="formErrors.physics" class="text-xs text-red-500 mt-1">{{ formErrors.physics }}</p>
             </div>
 
             <!-- Chemistry -->
             <div>
               <label class="form-label font-semibold required">Chemistry (0-50)</label>
-              <input v-model.number="form.chemistry" type="number" min="0" max="50" class="form-input" :class="{'border-red-500': formErrors.chemistry}" @input="validateField('chemistry')" />
+              <input v-model.number="form.chemistry" type="number" min="0" max="50" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.chemistry}" @input="validateField('chemistry')" />
               <p v-if="formErrors.chemistry" class="text-xs text-red-500 mt-1">{{ formErrors.chemistry }}</p>
             </div>
 
             <!-- Biology -->
             <div>
               <label class="form-label font-semibold required">Biology (0-50)</label>
-              <input v-model.number="form.biology" type="number" min="0" max="50" class="form-input" :class="{'border-red-500': formErrors.biology}" @input="validateField('biology')" />
+              <input v-model.number="form.biology" type="number" min="0" max="50" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.biology}" @input="validateField('biology')" />
               <p v-if="formErrors.biology" class="text-xs text-red-500 mt-1">{{ formErrors.biology }}</p>
             </div>
 
             <!-- Geography -->
             <div>
               <label class="form-label font-semibold required">Geography (0-50)</label>
-              <input v-model.number="form.geography" type="number" min="0" max="50" class="form-input" :class="{'border-red-500': formErrors.geography}" @input="validateField('geography')" />
+              <input v-model.number="form.geography" type="number" min="0" max="50" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.geography}" @input="validateField('geography')" />
               <p v-if="formErrors.geography" class="text-xs text-red-500 mt-1">{{ formErrors.geography }}</p>
             </div>
 
             <!-- History -->
             <div>
               <label class="form-label font-semibold required">History (0-50)</label>
-              <input v-model.number="form.history" type="number" min="0" max="50" class="form-input" :class="{'border-red-500': formErrors.history}" @input="validateField('history')" />
+              <input v-model.number="form.history" type="number" min="0" max="50" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.history}" @input="validateField('history')" />
               <p v-if="formErrors.history" class="text-xs text-red-500 mt-1">{{ formErrors.history }}</p>
             </div>
 
             <!-- English -->
             <div>
               <label class="form-label font-semibold required">English (0-50)</label>
-              <input v-model.number="form.english" type="number" min="0" max="50" class="form-input" :class="{'border-red-500': formErrors.english}" @input="validateField('english')" />
+              <input v-model.number="form.english" type="number" min="0" max="50" class="form-input text-sm md:text-base" :class="{'border-red-500': formErrors.english}" @input="validateField('english')" />
               <p v-if="formErrors.english" class="text-xs text-red-500 mt-1">{{ formErrors.english }}</p>
             </div>
           </div>
 
           <!-- Footer -->
-          <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
-            <button class="btn-outline btn px-6" @click="closeModal">Cancel</button>
-            <button class="btn-primary btn px-6 shadow-lg" @click="addScore">
+          <div class="flex justify-end gap-3 mt-6 md:mt-8 pt-4 border-t border-gray-100">
+            <button class="btn-outline btn px-4 md:px-6 text-sm md:text-base" @click="closeModal">Cancel</button>
+            <button class="btn-primary btn px-4 md:px-6 shadow-lg text-sm md:text-base" @click="addScore">
               {{ editingId ? 'Update Score' : 'Save Score' }}
             </button>
           </div>
@@ -419,27 +535,40 @@
       </div>
     </div>
 
-    <!-- Delete Modal -->
-    <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn" @click.self="closeDeleteModal">
-      <div class="bg-white rounded-2xl p-6 w-full max-w-md transform animate-slideUp">
+    <!-- Delete Modal - Responsive -->
+    <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 md:p-4 animate-fadeIn" @click.self="closeDeleteModal">
+      <div class="bg-white rounded-2xl md:rounded-3xl p-5 md:p-6 w-full max-w-md transform animate-slideUp">
         <div class="text-center">
-          <div class="flex justify-center mb-4">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-              <TrashIcon class="w-8 h-8 text-red-600" />
+          <div class="flex justify-center mb-3 md:mb-4">
+            <div class="w-14 h-14 md:w-16 md:h-16 bg-red-100 rounded-full flex items-center justify-center">
+              <TrashIcon class="w-7 h-7 md:w-8 md:h-8 text-red-600" />
             </div>
           </div>
-          <h3 class="text-2xl font-black text-gray-900">Delete Score</h3>
-          <p class="text-gray-500 mt-2">
+          <h3 class="text-xl md:text-2xl font-black text-gray-900">Delete Score</h3>
+          <p class="text-sm md:text-base text-gray-500 mt-2">
             Are you sure you want to delete this score?
             <br />
-            <span class="text-red-500 text-sm">This action cannot be undone.</span>
+            <span class="text-red-500 text-xs md:text-sm">This action cannot be undone.</span>
           </p>
         </div>
-        <div class="flex justify-end gap-3 mt-6">
-          <button class="btn-outline btn" @click="closeDeleteModal">Cancel</button>
-          <button class="btn bg-red-500 text-white hover:bg-red-600 shadow-md" @click="confirmDelete">Delete</button>
+        <div class="flex justify-end gap-3 mt-5 md:mt-6">
+          <button class="btn-outline btn text-sm md:text-base" @click="closeDeleteModal">Cancel</button>
+          <button class="btn bg-red-500 text-white hover:bg-red-600 shadow-md text-sm md:text-base" @click="confirmDelete">Delete</button>
         </div>
       </div>
+    </div>
+
+    <!-- Mobile Floating Add Button (appears when scrolling) -->
+    <div
+      v-if="!showModal && !loading"
+      class="fixed bottom-4 right-4 z-40 md:hidden"
+    >
+      <button
+        @click="openAddModal"
+        class="bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:bg-indigo-700 transition"
+      >
+        <PlusIcon class="w-5 h-5" />
+      </button>
     </div>
   </div>
 </template>
@@ -465,7 +594,7 @@ import {
 // Alert Modal State
 const alertModal = ref({
   show: false,
-  type: 'success', // 'success' or 'error'
+  type: 'success',
   title: '',
   message: ''
 })
@@ -483,6 +612,12 @@ const closeAlertModal = () => {
   alertModal.value.show = false
 }
 
+// Helper to truncate text
+const truncateText = (text, length) => {
+  if (!text) return '—'
+  return text.length > length ? text.substring(0, length) + '...' : text
+}
+
 // Data
 const scores = ref([])
 const search = ref('')
@@ -497,7 +632,7 @@ const showExportMenu = ref(false)
 
 // Pagination
 const currentPage = ref(1)
-const itemsPerPage = ref(20)
+const itemsPerPage = ref(10)
 
 // Class list
 const classList = ['7A', '7B', '7C', '8A', '8B', '8C', '9A', '9B']
@@ -962,6 +1097,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Custom breakpoint for extra small screens (480px) */
+@media (min-width: 480px) {
+  .xs\:inline {
+    display: inline;
+  }
+  .xs\:hidden {
+    display: none;
+  }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -1048,5 +1193,10 @@ onMounted(() => {
 
 .btn {
   cursor: pointer;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
 }
 </style>

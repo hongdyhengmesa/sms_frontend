@@ -1,62 +1,65 @@
 <template>
-  <div class="space-y-6 report-container">
+  <div class="space-y-4 md:space-y-6 report-container">
     <div class="print-header">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
         <div>
-          <h2 class="text-3xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <h2 class="text-2xl md:text-3xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Student Report Card
           </h2>
-          <p class="text-gray-500 mt-1">
+          <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
             Official academic performance report
           </p>
         </div>
 
-        <!-- Actions - Hide on print -->
-        <div class="print-hide flex gap-3">
-          <button class="btn-outline btn" @click="exportPDF">
+        <!-- Actions - Hide on print, responsive -->
+        <div class="print-hide flex gap-2 md:gap-3">
+          <button class="btn-outline btn text-sm md:text-base" @click="exportPDF">
             <ArrowDownTrayIcon class="w-4 h-4" />
-            Export PDF
+            <span class="hidden xs:inline">Export PDF</span>
+            <span class="xs:hidden">PDF</span>
           </button>
-          <button class="btn-primary btn" @click="printReport">
+          <button class="btn-primary btn text-sm md:text-base" @click="printReport">
             <PrinterIcon class="w-4 h-4" />
-            Print
+            <span class="hidden xs:inline">Print</span>
+            <span class="xs:hidden">Print</span>
           </button>
         </div>
       </div>
     </div>
 
-    <div class="print-hide card card-shadow max-w-6xl mx-auto p-6">
-      <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+    <!-- Student Selector - Responsive -->
+    <div class="print-hide card card-shadow max-w-6xl mx-auto p-4 md:p-6">
+      <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
         <div class="flex-1">
-          <label class="text-sm font-semibold text-gray-700 mb-2 block">
+          <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 block">
             Select Student
           </label>
           <div class="relative">
             <select 
               v-model="selectedStudentId" 
               @change="fetchReport"
-              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+              class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm md:text-base"
             >
               <option v-for="student in studentList" :key="student.id" :value="student.id">
-                {{ student.student_name }} - {{ student.class_name }} (Rank: {{ student.rank }})
+                {{ truncateText(student.student_name, 25) }} - {{ student.class_name }} (Rank: {{ student.rank }})
               </option>
             </select>
           </div>
         </div>
         
-        <div class="flex gap-3">
+        <div class="flex gap-2 md:gap-3">
           <button 
             @click="previousStudent" 
             :disabled="!hasPreviousStudent"
-            class="btn-outline btn px-4"
+            class="btn-outline btn px-3 md:px-4 text-sm md:text-base"
             :class="{ 'opacity-50 cursor-not-allowed': !hasPreviousStudent }"
           >
-            ← Previous
+            ← Prev
           </button>
           <button 
             @click="nextStudent" 
             :disabled="!hasNextStudent"
-            class="btn-outline btn px-4"
+            class="btn-outline btn px-3 md:px-4 text-sm md:text-base"
             :class="{ 'opacity-50 cursor-not-allowed': !hasNextStudent }"
           >
             Next →
@@ -64,60 +67,61 @@
         </div>
       </div>
 
-      <!-- Class Summary Stats -->
-      <div class="mt-6 pt-6 border-t border-gray-100">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <!-- Class Summary Stats - Responsive Grid -->
+      <div class="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-100">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
           <div class="text-center">
-            <p class="text-xs text-gray-500 uppercase">Total Students</p>
-            <p class="text-2xl font-bold text-gray-800">{{ classStats.totalStudents }}</p>
+            <p class="text-[10px] md:text-xs text-gray-500 uppercase">Total Students</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-800">{{ classStats.totalStudents }}</p>
           </div>
           <div class="text-center">
-            <p class="text-xs text-gray-500 uppercase">Class Average</p>
-            <p class="text-2xl font-bold text-green-600">{{ classStats.classAverage }}%</p>
+            <p class="text-[10px] md:text-xs text-gray-500 uppercase">Class Average</p>
+            <p class="text-xl md:text-2xl font-bold text-green-600">{{ classStats.classAverage }}%</p>
           </div>
           <div class="text-center">
-            <p class="text-xs text-gray-500 uppercase">Highest Score</p>
-            <p class="text-2xl font-bold text-amber-600">{{ classStats.highestScore }}%</p>
+            <p class="text-[10px] md:text-xs text-gray-500 uppercase">Highest Score</p>
+            <p class="text-xl md:text-2xl font-bold text-amber-600">{{ classStats.highestScore }}%</p>
           </div>
           <div class="text-center">
-            <p class="text-xs text-gray-500 uppercase">Passing Rate</p>
-            <p class="text-2xl font-bold text-blue-600">{{ classStats.passingRate }}%</p>
+            <p class="text-[10px] md:text-xs text-gray-500 uppercase">Passing Rate</p>
+            <p class="text-xl md:text-2xl font-bold text-blue-600">{{ classStats.passingRate }}%</p>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Report Card - Responsive -->
     <div ref="reportRef" class="card card-shadow max-w-6xl mx-auto overflow-hidden">
-      <!-- HEADER -->
-      <div class="p-8" style="background:linear-gradient(135deg,#1e3a8a 0%,#312e81 60%,#1e1b4b 100%);">
-        <div class="flex items-start justify-between">
-          <!-- School -->
-          <div>
-            <p class="text-xs text-blue-300 uppercase tracking-widest mb-2">
+      <!-- HEADER with responsive padding -->
+      <div class="p-4 md:p-8" style="background:linear-gradient(135deg,#1e3a8a 0%,#312e81 60%,#1e1b4b 100%);">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <!-- School Info -->
+          <div class="text-center sm:text-left">
+            <p class="text-[10px] md:text-xs text-blue-300 uppercase tracking-widest mb-1 md:mb-2">
               Official Academic Report
             </p>
-            <h2 class="font-serif text-4xl text-white mb-1">
+            <h2 class="font-serif text-2xl md:text-4xl text-white mb-0.5 md:mb-1">
               Soab Secondary School
             </h2>
-            <p class="text-sm text-blue-200">
+            <p class="text-xs md:text-sm text-blue-200">
               Soab, Kratie
             </p>
-            <p class="text-xs text-blue-300 mt-2 print-date">
+            <p class="text-[10px] md:text-xs text-blue-300 mt-1 md:mt-2 print-date">
               Generated: {{ currentDate }}
             </p>
           </div>
 
-          <!-- Average -->
-          <div class="text-right">
-            <p class="text-xs text-blue-300 mb-2">
+          <!-- Average Score -->
+          <div class="text-center sm:text-right">
+            <p class="text-[10px] md:text-xs text-blue-300 mb-1 md:mb-2">
               Semester Average
             </p>
-            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 rounded-2xl px-5 py-3">
+            <div class="inline-flex items-center gap-1 md:gap-2 bg-white/10 backdrop-blur border border-white/20 rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-3">
               <div>
-                <p class="text-4xl font-extrabold text-white leading-none">
+                <p class="text-2xl md:text-4xl font-extrabold text-white leading-none">
                   {{ score.average }}%
                 </p>
-                <p class="text-[11px] text-blue-200 mt-0.5">
+                <p class="text-[9px] md:text-[11px] text-blue-200 mt-0.5">
                   {{ performanceText }}
                 </p>
               </div>
@@ -126,69 +130,65 @@
         </div>
       </div>
 
-      <!-- BODY -->
-      <div class="p-8">
-        <!-- Student Info -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-5 mb-8 p-5 bg-gray-50 rounded-2xl">
+      <!-- BODY with responsive padding -->
+      <div class="p-4 md:p-8">
+        <!-- Student Info - Responsive Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 mb-5 md:mb-8 p-3 md:p-5 bg-gray-50 rounded-xl md:rounded-2xl">
           <div>
             <p class="info-label">Student Name</p>
-            <p class="info-value">{{ score.student_name }}</p>
+            <p class="info-value text-sm md:text-base">{{ score.student_name }}</p>
           </div>
           <div>
             <p class="info-label">Class</p>
-            <p class="info-value">{{ score.class_name }}</p>
+            <p class="info-value text-sm md:text-base">{{ score.class_name }}</p>
           </div>
           <div>
             <p class="info-label">Gender</p>
-            <p class="info-value">{{ score.gender }}</p>
+            <p class="info-value text-sm md:text-base">{{ score.gender }}</p>
           </div>
           <div>
             <p class="info-label">Grade</p>
-            <p class="info-value">{{ score.grade }}</p>
+            <p class="info-value text-sm md:text-base">{{ score.grade }}</p>
           </div>
           <div>
             <p class="info-label">Rank</p>
-            <p class="info-value">{{ score.rank }} out of {{ classStats.totalStudents }}</p>
+            <p class="info-value text-sm md:text-base">{{ score.rank }} out of {{ classStats.totalStudents }}</p>
           </div>
           <div>
             <p class="info-label">Total Score</p>
-            <p class="info-value">{{ score.total }}</p>
+            <p class="info-value text-sm md:text-base">{{ score.total }}</p>
           </div>
         </div>
 
-        <!-- SUBJECT TABLE -->
-        <h3 class="text-sm font-bold text-gray-700 mb-3">Academic Results</h3>
+        <!-- SUBJECT TABLE - Responsive -->
+        <h3 class="text-xs md:text-sm font-bold text-gray-700 mb-2 md:mb-3">Academic Results</h3>
         <div class="overflow-x-auto rounded-xl border border-gray-100">
-          <table class="data-table">
+          <table class="data-table w-full text-xs md:text-sm">
             <thead>
               <tr>
-                <th>Subject</th>
-                <th>Max Score</th>
-                <th>Student Score</th>
-                <th>Percentage</th>
-                <th>Status</th>
-                <th class="print-hide-column">Performance</th>
+                <th class="px-2 md:px-5 py-2 md:py-4">Subject</th>
+                <th class="px-2 md:px-5 py-2 md:py-4">Max</th>
+                <th class="px-2 md:px-5 py-2 md:py-4">Score</th>
+                <th class="px-2 md:px-5 py-2 md:py-4">%</th>
+                <th class="px-2 md:px-5 py-2 md:py-4">Status</th>
+                <th class="print-hide-column px-2 md:px-5 py-2 md:py-4">Performance</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="subject in subjects" :key="subject.name">
-                <td class="subject-name">{{ subject.name }}</td>
-                <td>{{ subject.maxScore }}</td>
-                <td>
-                  <strong>{{ subject.score }}</strong>
-                </td>
-                <td>
-                  {{ ((subject.score / subject.maxScore) * 100).toFixed(1) }}%
-                </td>
-                <td>
-                  <span class="badge" :class="passClass(subject.score, subject.maxScore)">
+              <tr v-for="subject in subjects" :key="subject.name" class="border-t border-gray-100">
+                <td class="subject-name px-2 md:px-5 py-2 md:py-4 font-semibold">{{ subject.name }}</td>
+                <td class="px-2 md:px-5 py-2 md:py-4">{{ subject.maxScore }}</td>
+                <td class="px-2 md:px-5 py-2 md:py-4 font-bold">{{ subject.score }}</td>
+                <td class="px-2 md:px-5 py-2 md:py-4">{{ ((subject.score / subject.maxScore) * 100).toFixed(1) }}%</td>
+                <td class="px-2 md:px-5 py-2 md:py-4">
+                  <span class="badge text-[10px] md:text-xs" :class="passClass(subject.score, subject.maxScore)">
                     {{ passText(subject.score, subject.maxScore) }}
                   </span>
                 </td>
-                <td class="print-hide-column">
-                  <div class="w-24 bg-gray-200 rounded-full h-2">
+                <td class="print-hide-column px-2 md:px-5 py-2 md:py-4">
+                  <div class="w-16 md:w-24 bg-gray-200 rounded-full h-1.5 md:h-2">
                     <div 
-                      class="h-2 rounded-full transition-all"
+                      class="h-1.5 md:h-2 rounded-full transition-all"
                       :class="getProgressBarClass(subject.score, subject.maxScore)"
                       :style="{ width: `${(subject.score / subject.maxScore) * 100}%` }"
                     ></div>
@@ -199,23 +199,23 @@
           </table>
         </div>
 
-        <!-- SUMMARY -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
-          <div class="summary-card bg-green-50">
-            <p class="summary-value text-green-600">{{ score.grade }}</p>
-            <p class="summary-label">Final Grade</p>
+        <!-- SUMMARY CARDS - Responsive Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mt-5 md:mt-8">
+          <div class="summary-card bg-green-50 rounded-xl md:rounded-2xl p-3 md:p-5 text-center">
+            <p class="summary-value text-green-600 text-xl md:text-3xl font-extrabold mb-0.5 md:mb-1">{{ score.grade }}</p>
+            <p class="summary-label text-[10px] md:text-xs text-gray-500 uppercase tracking-wide">Final Grade</p>
           </div>
-          <div class="summary-card bg-blue-50">
-            <p class="summary-value text-blue-600">#{{ score.rank }}</p>
-            <p class="summary-label">Class Rank</p>
+          <div class="summary-card bg-blue-50 rounded-xl md:rounded-2xl p-3 md:p-5 text-center">
+            <p class="summary-value text-blue-600 text-xl md:text-3xl font-extrabold mb-0.5 md:mb-1">#{{ score.rank }}</p>
+            <p class="summary-label text-[10px] md:text-xs text-gray-500 uppercase tracking-wide">Class Rank</p>
           </div>
-          <div class="summary-card bg-purple-50">
-            <p class="summary-value text-purple-600">{{ score.average }}%</p>
-            <p class="summary-label">Average</p>
+          <div class="summary-card bg-purple-50 rounded-xl md:rounded-2xl p-3 md:p-5 text-center">
+            <p class="summary-value text-purple-600 text-xl md:text-3xl font-extrabold mb-0.5 md:mb-1">{{ score.average }}%</p>
+            <p class="summary-label text-[10px] md:text-xs text-gray-500 uppercase tracking-wide">Average</p>
           </div>
-          <div class="summary-card bg-amber-50">
-            <p class="summary-value text-amber-600">{{ score.total }}</p>
-            <p class="summary-label">Total Score</p>
+          <div class="summary-card bg-amber-50 rounded-xl md:rounded-2xl p-3 md:p-5 text-center">
+            <p class="summary-value text-amber-600 text-xl md:text-3xl font-extrabold mb-0.5 md:mb-1">{{ score.total }}</p>
+            <p class="summary-label text-[10px] md:text-xs text-gray-500 uppercase tracking-wide">Total Score</p>
           </div>
         </div>
       </div>
@@ -252,6 +252,12 @@ const score = ref({
   grade: '',
   rank: '',
 })
+
+// Helper to truncate text
+const truncateText = (text, length) => {
+  if (!text) return '—'
+  return text.length > length ? text.substring(0, length) + '...' : text
+}
 
 // ======================
 // COMPUTED PROPERTIES
@@ -325,21 +331,6 @@ const getProgressBarClass = (value, max) => {
   return 'bg-red-500'
 }
 
-const getSubjectCount = (status) => {
-  if (status === 'pass') {
-    return subjects.value.filter(s => (s.score / s.maxScore) * 100 >= 50).length
-  }
-  return 0
-}
-
-const getHighestSubject = () => {
-  const highest = subjects.value.reduce((prev, current) => 
-    (prev.score / prev.maxScore) > (current.score / current.maxScore) ? prev : current
-  )
-  const percent = (highest.score / highest.maxScore) * 100
-  return percent >= 90 ? highest.name : null
-}
-
 // ======================
 // FETCH DATA
 // ======================
@@ -384,10 +375,8 @@ const nextStudent = async () => {
 }
 
 const exportPDF = () => {
-  // Add a class to body before printing
   document.body.classList.add('printing')
   window.print()
-  // Remove the class after print dialog closes
   setTimeout(() => {
     document.body.classList.remove('printing')
   }, 100)
@@ -418,8 +407,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Custom breakpoint for extra small screens (480px) */
+@media (min-width: 480px) {
+  .xs\:inline {
+    display: inline;
+  }
+  .xs\:hidden {
+    display: none;
+  }
+}
+
 .btn {
-  @apply px-5 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all;
+  @apply px-3 md:px-5 py-2 md:py-3 rounded-xl md:rounded-2xl font-bold flex items-center gap-1.5 md:gap-2 transition-all;
 }
 
 .btn-primary {
@@ -431,7 +430,7 @@ onMounted(() => {
 }
 
 .card {
-  @apply bg-white rounded-3xl border border-gray-100;
+  @apply bg-white rounded-2xl md:rounded-3xl border border-gray-100;
 }
 
 .card-shadow {
@@ -439,35 +438,35 @@ onMounted(() => {
 }
 
 .info-label {
-  @apply text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1;
+  @apply text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5 md:mb-1;
 }
 
 .info-value {
-  @apply text-sm font-semibold text-gray-800;
+  @apply text-xs md:text-sm font-semibold text-gray-800;
 }
 
 .data-table {
-  @apply min-w-full text-sm;
+  @apply min-w-full;
 }
 
 .data-table thead {
-  @apply bg-gray-50 text-gray-500 uppercase text-xs;
+  @apply bg-gray-50 text-gray-500 uppercase text-[10px] md:text-xs;
 }
 
 .data-table th {
-  @apply px-5 py-4 text-left;
+  @apply px-2 md:px-5 py-2 md:py-4 text-left;
 }
 
 .data-table td {
-  @apply px-5 py-4 border-t border-gray-100;
+  @apply px-2 md:px-5 py-2 md:py-4;
 }
 
 .subject-name {
-  @apply font-semibold text-gray-800;
+  @apply font-semibold text-gray-800 text-xs md:text-sm;
 }
 
 .badge {
-  @apply px-3 py-1 rounded-full text-xs font-bold;
+  @apply px-2 md:px-3 py-0.5 md:py-1 rounded-full font-bold;
 }
 
 .badge-green {
@@ -479,17 +478,18 @@ onMounted(() => {
 }
 
 .summary-card {
-  @apply rounded-2xl p-5 text-center transition-all hover:scale-105;
+  @apply rounded-xl md:rounded-2xl p-3 md:p-5 text-center transition-all hover:scale-105;
 }
 
 .summary-value {
-  @apply text-3xl font-extrabold mb-1;
+  @apply text-lg md:text-3xl font-extrabold mb-0.5 md:mb-1;
 }
 
 .summary-label {
-  @apply text-xs text-gray-500 uppercase tracking-wide;
+  @apply text-[9px] md:text-xs text-gray-500 uppercase tracking-wide;
 }
 
+/* Print Styles */
 @media print {
   /* Hide admin sidebar - this targets common admin sidebar classes */
   aside,
@@ -499,7 +499,11 @@ onMounted(() => {
   [class*="Sidebar"],
   nav:not(.print-friendly),
   .main-nav,
-  .admin-nav {
+  .admin-nav,
+  .v-navigation-drawer,
+  .v-app-bar,
+  .el-aside,
+  .ant-layout-sider {
     display: none !important;
     visibility: hidden !important;
     width: 0 !important;
@@ -512,7 +516,9 @@ onMounted(() => {
   main,
   .main-content,
   .content-wrapper,
-  [class*="main-content"] {
+  .v-main,
+  .el-main,
+  .ant-layout-content {
     margin-left: 0 !important;
     padding-left: 0 !important;
     width: 100% !important;
@@ -531,14 +537,6 @@ onMounted(() => {
   /* Show print-specific elements */
   .print-header {
     display: block !important;
-  }
-
-  .print-footer {
-    display: block !important;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
   }
 
   .print-date {
@@ -591,43 +589,10 @@ onMounted(() => {
   .bg-gradient-to-r {
     background: #1e3a8a !important;
   }
-}
 
-/* Global print styles for admin sidebar */
-@media print {
-  /* Hide common admin layout elements */
-  .v-navigation-drawer,
-  .v-app-bar,
-  .v-main__wrap > nav,
-  .layout > nav,
-  [data-testid="sidebar"],
-  .sidebar-menu,
-  .navigation-drawer,
-  .drawer,
-  .menu-sidebar,
-  .admin-menu,
-  .side-menu,
-  .navbar,
-  .app-header,
-  .toolbar,
-  .v-toolbar {
-    display: none !important;
-  }
-
-  /* Make main content full width */
-  .v-main,
-  .main,
-  .app-main,
-  .content {
-    margin-left: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-  }
-
-  /* Remove any margins/paddings that might be from sidebar */
-  body {
-    margin: 0 !important;
-    padding: 0 !important;
+  /* Reset transforms */
+  * {
+    transform: none !important;
   }
 }
 
@@ -698,11 +663,6 @@ onMounted(() => {
     margin: 0 !important;
     padding: 0 !important;
     overflow-x: visible !important;
-  }
-
-  /* Reset any transforms that might affect layout */
-  * {
-    transform: none !important;
   }
 }
 
