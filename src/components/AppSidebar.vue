@@ -1,19 +1,19 @@
 <template>
   <aside
     class="sidebar flex flex-col bg-white border-r border-gray-100 flex-shrink-0 transition-all duration-300 overflow-hidden z-20"
-    :class="{ 'sidebar-collapsed': collapsed, 'sidebar-mobile': isMobileMenuOpen }"
+    :class="{ 'sidebar-collapsed': collapsed, 'sidebar-mobile': isMobileOpen }"
     :style="{ width: collapsed ? '68px' : '256px' }"
     style="box-shadow: 2px 0 12px rgba(0,0,0,0.04);"
   >
-
     <!-- Logo -->
     <div
       class="flex items-center gap-3 px-4 py-4 md:py-5 border-b border-gray-100 flex-shrink-0"
       :class="collapsed ? 'justify-center' : ''"
     >
       <div
-        class="w-8 h-8 md:w-9 md:h-9 rounded-xl flex-shrink-0 flex items-center justify-center transition-all duration-300 hover:scale-105"
+        class="w-8 h-8 md:w-9 md:h-9 rounded-xl flex-shrink-0 flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer"
         style="background: linear-gradient(135deg,#2563eb,#4f46e5); box-shadow:0 4px 10px rgba(79,70,229,.35);"
+        @click="goToDashboard"
       >
         <svg
           width="16"
@@ -31,15 +31,16 @@
 
       <span
         v-if="!collapsed"
-        class="font-serif text-base md:text-lg text-gray-900 whitespace-nowrap"
+        class="font-serif text-base md:text-lg text-gray-900 whitespace-nowrap cursor-pointer"
+        @click="goToDashboard"
       >
         Edu<span class="text-indigo-600">Core</span>
       </span>
     </div>
 
-    <!-- Mobile Close Button (visible when mobile menu is open) -->
+    <!-- Mobile Close Button -->
     <button
-      v-if="isMobileMenuOpen"
+      v-if="isMobileOpen"
       class="md:hidden absolute top-4 right-4 p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition z-30"
       @click="closeMobileMenu"
       aria-label="Close menu"
@@ -57,14 +58,14 @@
       >
         <!-- Section Label -->
         <p
-          v-if="!collapsed && !isMobileMenuOpen"
+          v-if="!collapsed && !isMobileOpen"
           class="text-[9px] md:text-[10px] font-bold tracking-widest uppercase text-gray-400 px-2 pt-3 pb-1"
         >
           {{ section.label }}
         </p>
 
         <div
-          v-else-if="collapsed && !isMobileMenuOpen"
+          v-else-if="collapsed && !isMobileOpen"
           class="my-2 border-t border-gray-100"
         ></div>
 
@@ -76,12 +77,11 @@
           class="nav-link group"
           :class="{
             'active': route.path === item.path,
-            'justify-center': collapsed && !isMobileMenuOpen
+            'justify-center': collapsed && !isMobileOpen
           }"
-          :title="collapsed && !isMobileMenuOpen ? item.label : ''"
-          @click="handleMobileNavClick"
+          :title="collapsed && !isMobileOpen ? item.label : ''"
+          @click="handleNavClick"
         >
-          <!-- Icon Container with animation -->
           <div class="nav-icon-wrapper" :class="{ 'active': route.path === item.path }">
             <component
               :is="item.icon"
@@ -90,18 +90,16 @@
             />
           </div>
 
-          <!-- Label -->
           <span
-            v-if="!collapsed || isMobileMenuOpen"
+            v-if="!collapsed || isMobileOpen"
             class="flex-1 text-left ml-2 md:ml-3"
             :class="{ 'text-indigo-600 font-semibold': route.path === item.path }"
           >
             {{ item.label }}
           </span>
 
-          <!-- Badge -->
           <span
-            v-if="!collapsed && item.badge && !isMobileMenuOpen"
+            v-if="!collapsed && item.badge && !isMobileOpen"
             class="ml-auto bg-indigo-100 text-indigo-600 text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full"
           >
             {{ item.badge }}
@@ -114,7 +112,7 @@
     <div class="p-2 md:p-3 border-t border-gray-100">
       <div
         class="flex items-center gap-2 md:gap-2.5 p-1.5 md:p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
-        :class="collapsed && !isMobileMenuOpen ? 'justify-center' : ''"
+        :class="collapsed && !isMobileOpen ? 'justify-center' : ''"
         @click="goToSettings"
       >
         <div
@@ -125,7 +123,7 @@
         </div>
 
         <div
-          v-if="!collapsed || isMobileMenuOpen"
+          v-if="!collapsed || isMobileOpen"
           class="min-w-0 flex-1"
         >
           <p class="text-xs md:text-sm font-semibold text-gray-800 truncate">
@@ -141,26 +139,17 @@
       <button
         @click="logout"
         class="w-full mt-2 md:mt-3 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all duration-300 hover:shadow-lg active:scale-95"
-        :class="collapsed && !isMobileMenuOpen ? 'px-2' : 'px-3'"
+        :class="collapsed && !isMobileOpen ? 'px-2' : 'px-3'"
       >
         <span class="flex items-center justify-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
           </svg>
-          <span v-if="!collapsed || isMobileMenuOpen">Logout</span>
+          <span v-if="!collapsed || isMobileOpen">Logout</span>
         </span>
       </button>
     </div>
   </aside>
-
-  <!-- Mobile Overlay -->
-  <Transition name="fade">
-    <div
-      v-if="isMobileMenuOpen"
-      class="fixed inset-0 bg-black/50 z-10 md:hidden"
-      @click="closeMobileMenu"
-    ></div>
-  </Transition>
 </template>
 
 <script setup>
@@ -183,19 +172,17 @@ import {
 // Props
 const props = defineProps({
   collapsed: Boolean,
+  isMobileOpen: Boolean,
 })
 
 // Emits
-const emit = defineEmits(['toggle-mobile'])
+const emit = defineEmits(['toggle-mobile', 'close-mobile'])
 
 // Router
 const router = useRouter()
 const route = useRoute()
 
-// Mobile menu state
-const isMobileMenuOpen = ref(false)
-
-// User info from localStorage
+// User info
 const userName = ref('Admin User')
 const userRole = ref('System Admin')
 const userInitials = computed(() => {
@@ -241,6 +228,35 @@ const navSections = [
   },
 ]
 
+// Handle navigation click - THIS IS THE KEY FIX!
+const handleNavClick = () => {
+  // Close mobile sidebar when a navigation link is clicked
+  if (props.isMobileOpen) {
+    emit('close-mobile')
+  }
+}
+
+// Close mobile menu
+const closeMobileMenu = () => {
+  emit('close-mobile')
+}
+
+// Go to dashboard
+const goToDashboard = () => {
+  router.push('/dashboard')
+  if (props.isMobileOpen) {
+    emit('close-mobile')
+  }
+}
+
+// Go to settings
+const goToSettings = () => {
+  router.push('/settings')
+  if (props.isMobileOpen) {
+    emit('close-mobile')
+  }
+}
+
 // Fetch user data
 const fetchUserData = () => {
   const user = localStorage.getItem('user')
@@ -255,35 +271,6 @@ const fetchUserData = () => {
   }
 }
 
-// Open mobile menu
-const openMobileMenu = () => {
-  isMobileMenuOpen.value = true
-  document.body.style.overflow = 'hidden'
-  emit('toggle-mobile', true)
-}
-
-// Close mobile menu
-const closeMobileMenu = () => {
-  isMobileMenuOpen.value = false
-  document.body.style.overflow = ''
-  emit('toggle-mobile', false)
-}
-
-// Handle mobile nav click
-const handleMobileNavClick = () => {
-  if (window.innerWidth < 768) {
-    closeMobileMenu()
-  }
-}
-
-// Go to settings
-const goToSettings = () => {
-  router.push('/settings')
-  if (window.innerWidth < 768) {
-    closeMobileMenu()
-  }
-}
-
 // Logout
 const logout = () => {
   if (confirm('Are you sure you want to logout?')) {
@@ -294,32 +281,8 @@ const logout = () => {
   }
 }
 
-// Handle window resize
-const handleResize = () => {
-  if (window.innerWidth >= 768 && isMobileMenuOpen.value) {
-    closeMobileMenu()
-  }
-}
-
-// Listen for custom event from header to toggle mobile menu
-const handleToggleMobile = () => {
-  if (isMobileMenuOpen.value) {
-    closeMobileMenu()
-  } else {
-    openMobileMenu()
-  }
-}
-
 onMounted(() => {
   fetchUserData()
-  window.addEventListener('resize', handleResize)
-  window.addEventListener('toggle-mobile-sidebar', handleToggleMobile)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-  window.removeEventListener('toggle-mobile-sidebar', handleToggleMobile)
-  document.body.style.overflow = ''
 })
 </script>
 
@@ -345,10 +308,6 @@ onUnmounted(() => {
   
   .sidebar-mobile {
     transform: translateX(0);
-    width: 280px !important;
-  }
-  
-  .sidebar-collapsed {
     width: 280px !important;
   }
 }
@@ -438,15 +397,5 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-/* Active state for icons */
-.router-link-active .nav-icon {
-  color: #4f46e5;
-}
-
-/* Hover scale effect */
-.group:hover .nav-icon {
-  transform: scale(1.1);
 }
 </style>

@@ -1,7 +1,12 @@
 <template>
   <div class="app-layout min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100">
     <!-- Sidebar -->
-    <AppSidebar :collapsed="sidebarCollapsed" @toggle-mobile="handleMobileSidebar" />
+    <AppSidebar 
+      :collapsed="sidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      @toggle-mobile="handleMobileSidebar"
+      @close-mobile="closeMobileSidebar"
+    />
 
     <!-- Mobile Sidebar Overlay -->
     <Transition name="fade">
@@ -15,7 +20,10 @@
     <!-- Main Content -->
     <div class="flex flex-col flex-1 overflow-hidden min-w-0">
       <!-- Topbar -->
-      <AppTopbar @toggle-sidebar="toggleSidebar" @toggle-mobile-sidebar="toggleMobileSidebar" />
+      <AppTopbar 
+        @toggle-sidebar="toggleSidebar" 
+        @toggle-mobile-sidebar="toggleMobileSidebar" 
+      />
 
       <!-- Page Content -->
       <main class="flex-1 overflow-y-auto p-3 md:p-6">
@@ -28,7 +36,7 @@
         </div>
       </main>
 
-      <!-- Footer (optional) -->
+      <!-- Footer -->
       <footer class="py-3 md:py-4 text-center text-[10px] md:text-xs text-gray-400 border-t border-gray-100 bg-white/50">
         <p>© {{ new Date().getFullYear() }} EduCore. All rights reserved.</p>
       </footer>
@@ -61,7 +69,6 @@ const checkMobile = () => {
 const toggleSidebar = () => {
   if (!isMobile.value) {
     sidebarCollapsed.value = !sidebarCollapsed.value
-    // Save preference to localStorage
     localStorage.setItem('sidebar_collapsed', sidebarCollapsed.value)
   }
 }
@@ -70,10 +77,11 @@ const toggleSidebar = () => {
 const toggleMobileSidebar = () => {
   if (isMobile.value) {
     isMobileSidebarOpen.value = !isMobileSidebarOpen.value
-    // Prevent body scroll when mobile sidebar is open
     if (isMobileSidebarOpen.value) {
+      document.body.classList.add('menu-open')
       document.body.style.overflow = 'hidden'
     } else {
+      document.body.classList.remove('menu-open')
       document.body.style.overflow = ''
     }
   }
@@ -82,6 +90,7 @@ const toggleMobileSidebar = () => {
 // Close mobile sidebar
 const closeMobileSidebar = () => {
   isMobileSidebarOpen.value = false
+  document.body.classList.remove('menu-open')
   document.body.style.overflow = ''
 }
 
@@ -89,8 +98,10 @@ const closeMobileSidebar = () => {
 const handleMobileSidebar = (isOpen) => {
   isMobileSidebarOpen.value = isOpen
   if (isOpen) {
+    document.body.classList.add('menu-open')
     document.body.style.overflow = 'hidden'
   } else {
+    document.body.classList.remove('menu-open')
     document.body.style.overflow = ''
   }
 }
@@ -100,7 +111,6 @@ const handleResize = () => {
   const wasMobile = isMobile.value
   checkMobile()
   
-  // Close mobile sidebar when resizing to desktop
   if (wasMobile && !isMobile.value && isMobileSidebarOpen.value) {
     closeMobileSidebar()
   }
@@ -121,7 +131,7 @@ const handleEscape = (event) => {
   }
 }
 
-// Listen for route changes to close mobile sidebar
+// Listen for route changes to close mobile sidebar - IMPORTANT!
 watch(() => router.currentRoute.value.path, () => {
   if (isMobileSidebarOpen.value) {
     closeMobileSidebar()
@@ -138,6 +148,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('keydown', handleEscape)
+  document.body.classList.remove('menu-open')
   document.body.style.overflow = ''
 })
 </script>
@@ -204,21 +215,10 @@ main::-webkit-scrollbar-thumb:hover {
     padding: 12px;
   }
 }
-
-/* Ensure content doesn't overflow */
-.router-view {
-  overflow-x: auto;
-}
-
-/* Smooth transitions for all interactive elements */
-* {
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
 </style>
 
-<!-- Global styles for better mobile experience -->
 <style>
-/* Global reset for better mobile handling */
+/* Global styles for better mobile experience */
 * {
   box-sizing: border-box;
 }
@@ -246,19 +246,10 @@ body.menu-open {
 }
 
 /* Improve focus visibility */
-:focus {
-  outline: none;
-}
-
 :focus-visible {
   outline: 2px solid #4f46e5;
   outline-offset: 2px;
   border-radius: 4px;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Prevent text selection on double-click */
