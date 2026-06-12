@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 const API_URL =
-  'http://localhost:3000/attendance'
+  `${import.meta.env.VITE_API_URL}/attendance`
 
 // Get all attendance records
 export const getAttendances = () => {

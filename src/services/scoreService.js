@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API =
-  'http://localhost:3000/scores'
+  `${import.meta.env.VITE_API_URL}/scores`
 
 // GET
 export const getScores = () =>

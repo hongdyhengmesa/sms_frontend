@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3000/students'
+const API_URL = `${import.meta.env.VITE_API_URL}/students`
 
 export const getStudents = () => {
   return axios.get(API_URL)
