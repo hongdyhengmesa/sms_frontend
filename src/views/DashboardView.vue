@@ -267,10 +267,10 @@ const fetchDashboard = async () => {
       studentResponse,
       classResponse,
     ] = await Promise.all([
-      axios.get('http://localhost:3000/scores'),
-      axios.get('http://localhost:3000/teachers'),
-      axios.get('http://localhost:3000/students'),
-      axios.get('http://localhost:3000/classes'),
+      axios.get('/scores'),
+      axios.get('/teachers'),
+      axios.get('/students'),
+      axios.get('/classes'),
     ])
 
     scores.value = scoreResponse.data || []
@@ -285,6 +285,9 @@ const fetchDashboard = async () => {
     
   } catch (error) {
     console.error('Dashboard Error:', error)
+    if(error.code === 'ERR_NETWORK'){
+      console.error('Cannot connect to backend.')
+    }
   } finally {
     loading.value = false
   }
