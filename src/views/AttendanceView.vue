@@ -29,7 +29,7 @@
           </div>
         </div>
         
-        <!-- Stats Cards - Responsive -->
+        <!-- Stats Cards -->
         <div class="flex gap-2 flex-wrap">
           <div class="bg-white rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-3 shadow-md border border-slate-100 hover:shadow-lg transition-all duration-300">
             <p class="text-[10px] md:text-xs text-slate-500 font-medium">Total</p>
@@ -60,7 +60,7 @@
           <span class="text-[10px] md:text-xs text-slate-400 bg-slate-100 px-2 py-0.5 md:py-1 rounded-full">{{ classOptions.length }} classes</span>
         </div>
         
-        <!-- Class Grid Cards - Responsive -->
+        <!-- Class Grid Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 md:gap-3">
           <button
             v-for="classItem in classOptions"
@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <!-- Current Class Banner - Responsive -->
+      <!-- Current Class Banner -->
       <div class="mb-4 md:mb-6">
         <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg md:rounded-xl p-3 md:p-4 text-white shadow-lg">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -110,30 +110,16 @@
         </div>
       </div>
 
-      <!-- Action Panel - Responsive -->
+      <!-- Action Panel -->
       <div class="bg-white/80 backdrop-blur-sm rounded-xl md:rounded-2xl shadow-lg p-3 md:p-5 mb-4 md:mb-6 border border-slate-100 transition-all hover:shadow-xl">
         <div class="flex flex-col lg:flex-row gap-3 md:gap-4 justify-between items-end">
           <div class="flex flex-wrap items-end gap-2 md:gap-3 flex-1">
-            <div class="flex-1 min-w-[140px] md:min-w-[200px]">
-              <label class="block text-[10px] md:text-xs font-semibold text-slate-500 mb-0.5 md:mb-1 ml-1">
-                <i class="fas fa-user-plus mr-0.5 md:mr-1 text-indigo-500"></i>New Student
-              </label>
-              <div class="relative group">
-                <i class="fas fa-user absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs md:text-sm group-focus-within:text-indigo-500 transition-colors"></i>
-                <input 
-                  type="text" 
-                  v-model="newStudentName" 
-                  @keyup.enter="addStudent" 
-                  placeholder="Enter full name..." 
-                  class="w-full pl-8 md:pl-9 pr-2 md:pr-3 py-1.5 md:py-2.5 rounded-lg md:rounded-xl border border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-sm md:text-base"
-                >
-              </div>
-            </div>
+            <!-- Add Student Button -->
             <button 
-              @click="addStudent" 
+              @click="openAddStudentModal" 
               class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium px-3 md:px-5 py-1.5 md:py-2.5 rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-1 md:gap-2 transform hover:scale-105 text-xs md:text-sm"
             >
-              <i class="fas fa-plus-circle"></i> Add
+              <i class="fas fa-plus-circle"></i> Add Student
             </button>
             <button 
               @click="resetCurrentClassAttendance" 
@@ -160,7 +146,7 @@
         </div>
       </div>
 
-      <!-- Date & Quick Actions - Responsive -->
+      <!-- Date & Quick Actions -->
       <div class="flex flex-col sm:flex-row flex-wrap justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
         <div class="flex items-center gap-2 md:gap-4 bg-white p-1.5 md:p-2 pl-2 md:pl-4 rounded-lg md:rounded-xl shadow-sm border border-slate-100">
           <i class="fas fa-calendar-alt text-indigo-500 text-base md:text-lg"></i>
@@ -224,7 +210,7 @@
         
         <!-- Table Content -->
         <div v-else>
-          <!-- Table Header with Summary -->
+          <!-- Table Header -->
           <div class="px-4 md:px-6 py-3 md:py-4 bg-gradient-to-r from-slate-50 to-indigo-50/50 border-b border-slate-200">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 md:gap-3">
               <div class="flex flex-wrap items-center gap-2 md:gap-4">
@@ -255,15 +241,12 @@
             </div>
           </div>
           
-          <!-- Responsive Table - Horizontal Scroll on Mobile -->
+          <!-- Table -->
           <div class="overflow-x-auto">
             <table class="min-w-[800px] md:min-w-full divide-y divide-slate-200">
               <thead class="bg-slate-50">
                 <tr>
-                  <th class="px-3 md:px-6 py-2 md:py-4 text-left text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    <input type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3 h-3 md:w-4 md:h-4">
-                  </th>
-                  <th class="px-2 md:px-6 py-2 md:py-4 text-left text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">#</th>
+                  <th class="px-3 md:px-6 py-2 md:py-4 text-left text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">#</th>
                   <th class="px-2 md:px-6 py-2 md:py-4 text-left text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Student ID</th>
                   <th class="px-2 md:px-6 py-2 md:py-4 text-left text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Student Name</th>
                   <th class="px-2 md:px-6 py-2 md:py-4 text-left text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Class</th>
@@ -278,9 +261,6 @@
                   :key="student.id" 
                   class="hover:bg-slate-50/80 transition-all duration-200 group"
                 >
-                  <td class="px-3 md:px-6 py-2 md:py-4 whitespace-nowrap">
-                    <input type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3 h-3 md:w-4 md:h-4">
-                  </td>
                   <td class="px-2 md:px-6 py-2 md:py-4 whitespace-nowrap text-[11px] md:text-sm font-mono text-slate-500">{{ idx + 1 }}</td>
                   <td class="px-2 md:px-6 py-2 md:py-4 whitespace-nowrap">
                     <span class="font-mono text-[10px] md:text-xs bg-slate-100 px-1.5 md:px-2 py-0.5 md:py-1 rounded-lg text-slate-600">{{ truncateText(student.student_code, 12) }}</span>
@@ -374,7 +354,7 @@
         </div>
       </div>
 
-      <!-- Footer Stats - Responsive -->
+      <!-- Footer Stats -->
       <div v-if="students.length > 0" class="mt-4 md:mt-6">
         <div class="bg-gradient-to-r from-slate-50 to-indigo-50/50 rounded-lg md:rounded-xl p-3 md:p-4 backdrop-blur-sm shadow-sm">
           <div class="flex flex-wrap justify-between items-center text-xs md:text-sm gap-3">
@@ -424,6 +404,97 @@
         </div>
       </div>
     </div>
+
+    <!-- Add Student Modal -->
+    <div v-if="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-3 md:p-4" @click.self="closeAddModal">
+      <div class="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="p-4 md:p-6">
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-4 md:mb-6">
+            <div>
+              <h3 class="text-xl md:text-2xl font-bold text-gray-900">Add Student</h3>
+              <p class="text-xs md:text-sm text-gray-500 mt-0.5">Fill in the details to add a new student</p>
+            </div>
+            <button class="text-gray-400 hover:text-gray-700 text-xl p-1" @click="closeAddModal">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <!-- Form -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+            <div>
+              <label class="form-label required">Student Name</label>
+              <input v-model="studentForm.name" type="text" class="form-input text-sm md:text-base" placeholder="Full name" />
+              <p v-if="formErrors.name" class="text-red-500 text-xs mt-1">{{ formErrors.name }}</p>
+            </div>
+
+            <div>
+              <label class="form-label required">Email</label>
+              <input v-model="studentForm.email" type="email" class="form-input text-sm md:text-base" placeholder="student@school.com" />
+              <p v-if="formErrors.email" class="text-red-500 text-xs mt-1">{{ formErrors.email }}</p>
+            </div>
+
+            <div>
+              <label class="form-label">Student ID</label>
+              <input :value="generatedStudentId" type="text" class="form-input bg-gray-100 text-sm md:text-base" readonly />
+            </div>
+
+            <div>
+              <label class="form-label">Enrollment Year</label>
+              <input v-model.number="studentForm.enrollYear" type="number" class="form-input text-sm md:text-base" />
+            </div>
+
+            <div>
+              <label class="form-label required">Class</label>
+              <select v-model="studentForm.class_id" class="form-input text-sm md:text-base">
+                <option value="">Select Class</option>
+                <option v-for="c in classOptions" :key="c.id" :value="c.id">
+                  {{ c.name }}
+                </option>
+              </select>
+              <p v-if="formErrors.class_id" class="text-red-500 text-xs mt-1">{{ formErrors.class_id }}</p>
+            </div>
+
+            <div>
+              <label class="form-label">GPA (0-4)</label>
+              <input v-model.number="studentForm.gpa" type="number" step="0.1" min="0" max="4" class="form-input text-sm md:text-base" />
+            </div>
+
+            <div>
+              <label class="form-label">Status</label>
+              <select v-model="studentForm.status" class="form-input text-sm md:text-base">
+                <option>Active</option>
+                <option>Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Preview Card -->
+          <div v-if="studentForm.name && studentForm.class_id" class="mt-5 md:mt-6 p-3 md:p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl md:rounded-2xl">
+            <p class="text-[10px] md:text-xs text-gray-500 mb-2">Preview</p>
+            <div class="flex items-center gap-2 md:gap-3">
+              <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white flex items-center justify-center text-base md:text-xl shadow-sm">
+                <i class="fas fa-user-graduate text-indigo-500"></i>
+              </div>
+              <div class="flex-1">
+                <p class="font-bold text-gray-900 text-sm md:text-base">{{ studentForm.name || 'Student Name' }}</p>
+                <p class="text-[10px] md:text-xs text-gray-500">{{ getSelectedClassName() }} • {{ studentForm.status || 'Active' }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[10px] md:text-xs text-gray-500">GPA</p>
+                <p class="text-base md:text-xl font-bold" :class="getGpaColor(studentForm.gpa)">{{ studentForm.gpa || 0 }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="flex justify-end gap-3 mt-6 md:mt-8 pt-4 border-t border-gray-100">
+            <button class="btn-outline btn text-sm md:text-base" @click="closeAddModal">Cancel</button>
+            <button class="btn-primary btn text-sm md:text-base" @click="saveNewStudent">Save Student</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -449,7 +520,6 @@ export default {
     const currentClassId = ref(null)
     const currentClassName = ref('')
     const attendanceDate = ref('')
-    const newStudentName = ref('')
     const alertMessage = ref('')
     const alertType = ref('success')
     const searchQuery = ref('')
@@ -457,11 +527,33 @@ export default {
     const currentPage = ref(1)
     const pageSize = ref(10)
     
+    // Modal state
+    const showAddModal = ref(false)
+    const studentForm = ref({
+      name: '',
+      email: '',
+      enrollYear: new Date().getFullYear(),
+      class_id: '',
+      gpa: 0,
+      status: 'Active',
+    })
+    const formErrors = ref({
+      name: '',
+      email: '',
+      class_id: '',
+    })
+    
     const stats = ref({
       total: 0,
       present: 0,
       late: 0,
       absent: 0
+    })
+
+    // Computed Student ID
+    const generatedStudentId = computed(() => {
+      const random = String(Math.floor(1000 + Math.random() * 9000))
+      return `STU${studentForm.value.enrollYear}${random}`
     })
 
     const showAlert = (msg, type = 'success') => {
@@ -472,6 +564,107 @@ export default {
       }, 3000)
     }
 
+    // Get selected class name
+    const getSelectedClassName = () => {
+      const selected = classOptions.value.find(c => c.id === Number(studentForm.value.class_id))
+      return selected ? selected.name : ''
+    }
+
+    // Get GPA color
+    const getGpaColor = (gpa) => {
+      if (gpa >= 3.5) return 'text-green-600'
+      if (gpa >= 3.0) return 'text-blue-600'
+      if (gpa >= 2.5) return 'text-yellow-600'
+      return 'text-red-600'
+    }
+
+    // Validate form
+    const validateForm = () => {
+      let isValid = true
+      formErrors.value = { name: '', email: '', class_id: '' }
+      
+      if (!studentForm.value.name.trim()) {
+        formErrors.value.name = 'Student name is required'
+        isValid = false
+      }
+      
+      if (!studentForm.value.email.trim()) {
+        formErrors.value.email = 'Email is required'
+        isValid = false
+      } else if (!/^\S+@\S+\.\S+$/.test(studentForm.value.email)) {
+        formErrors.value.email = 'Please enter a valid email address'
+        isValid = false
+      }
+      
+      if (!studentForm.value.class_id) {
+        formErrors.value.class_id = 'Please select a class'
+        isValid = false
+      }
+      
+      return isValid
+    }
+
+    // Open add modal
+    const openAddStudentModal = () => {
+      studentForm.value = {
+        name: '',
+        email: '',
+        enrollYear: new Date().getFullYear(),
+        class_id: currentClassId.value || '',
+        gpa: 0,
+        status: 'Active',
+      }
+      formErrors.value = { name: '', email: '', class_id: '' }
+      showAddModal.value = true
+    }
+
+    // Close add modal
+    const closeAddModal = () => {
+      showAddModal.value = false
+    }
+
+    // Save new student
+    const saveNewStudent = async () => {
+      if (!validateForm()) return
+      
+      loading.value = true
+      try {
+        const nameParts = studentForm.value.name.trim().split(' ')
+        const firstName = nameParts[0]
+        const lastName = nameParts.slice(1).join(' ') || ''
+        
+        const studentData = {
+          first_name: firstName,
+          last_name: lastName,
+          student_code: generatedStudentId.value,
+          gender: 'Male',
+          email: studentForm.value.email.trim(),
+          phone: '000000000',
+          address: 'School',
+          class_id: Number(studentForm.value.class_id),
+          gpa: Number(studentForm.value.gpa),
+          status: studentForm.value.status,
+        }
+        
+        await studentService.createStudent(studentData)
+        await loadAttendance()
+        
+        // Update class student count
+        const allStudentsResponse = await studentService.getStudents()
+        const allStudents = allStudentsResponse.data || []
+        const newCount = allStudents.filter(s => Number(s.class_id) === Number(studentForm.value.class_id)).length
+        classStudentCounts.value[studentForm.value.class_id] = newCount
+        
+        closeAddModal()
+        showAlert(`Student added to ${getSelectedClassName()}`, 'success')
+      } catch (error) {
+        console.error('Failed to add student:', error)
+        showAlert('Failed to add student', 'warning')
+      } finally {
+        loading.value = false
+      }
+    }
+
     // Load classes
     const loadClasses = async () => {
       try {
@@ -479,24 +672,36 @@ export default {
         const response = await classService.getClasses()
         let classes = response.data || []
         
-        const allowedClasses = ['7A', '7B', '7C', '8A', '8B', '9A', '9B']
+        console.log('All classes from backend:', classes)
+        
+        // Default classes if none exist
+        if (classes.length === 0) {
+          console.warn('No classes found, using default classes')
+          classes = [
+            { id: 1, name: '7A', grade_level: 7 },
+            { id: 2, name: '7B', grade_level: 7 },
+            { id: 3, name: '7C', grade_level: 7 },
+            { id: 4, name: '8A', grade_level: 8 },
+            { id: 5, name: '8B', grade_level: 8 },
+            { id: 6, name: '8C', grade_level: 8 },
+            { id: 7, name: '9A', grade_level: 9 },
+            { id: 8, name: '9B', grade_level: 9 },
+          ]
+        }
+        
+        const allowedClasses = ['7A', '7B', '7C', '8A', '8B', '8C', '9A', '9B']
         classes = classes.filter(c => allowedClasses.includes(c.name))
         
         classOptions.value = classes.sort((a, b) => a.name.localeCompare(b.name))
+        
+        console.log('Class options:', classOptions.value)
         
         const allStudentsResponse = await studentService.getStudents()
         const allStudents = allStudentsResponse.data || []
         
         const counts = {}
         for (const classItem of classOptions.value) {
-          let count = allStudents.filter(s => Number(s.class_id) === Number(classItem.id)).length
-          if (count === 0) {
-            count = allStudents.filter(s => String(s.class_id) === classItem.name).length
-          }
-          if (count === 0) {
-            count = allStudents.filter(s => String(s.class_id) === String(classItem.id)).length
-          }
-          counts[classItem.id] = count
+          counts[classItem.id] = allStudents.filter(s => Number(s.class_id) === Number(classItem.id)).length
         }
         classStudentCounts.value = counts
         
@@ -527,17 +732,9 @@ export default {
         const allStudentsResponse = await studentService.getStudents()
         const allStudents = allStudentsResponse.data || []
         
-        const selectedClass = classOptions.value.find(c => c.id === currentClassId.value)
-        
-        let classStudents = allStudents.filter(student => Number(student.class_id) === Number(currentClassId.value))
-        
-        if (classStudents.length === 0 && selectedClass) {
-          classStudents = allStudents.filter(student => String(student.class_id) === selectedClass.name)
-        }
-        
-        if (classStudents.length === 0) {
-          classStudents = allStudents.filter(student => String(student.class_id) === String(currentClassId.value))
-        }
+        const classStudents = allStudents.filter(student => 
+          Number(student.class_id) === Number(currentClassId.value)
+        )
         
         if (classStudents.length === 0) {
           students.value = []
@@ -605,50 +802,6 @@ export default {
       await loadAttendance()
     }
 
-    const addStudent = async () => {
-      const name = newStudentName.value.trim()
-      if (!name) {
-        showAlert('Please enter student name', 'warning')
-        return
-      }
-      
-      loading.value = true
-      try {
-        const nameParts = name.split(' ')
-        const firstName = nameParts[0]
-        const lastName = nameParts.slice(1).join(' ') || ''
-        
-        const studentData = {
-          first_name: firstName,
-          last_name: lastName,
-          student_code: `STU${Date.now()}`,
-          gender: 'Male',
-          email: `student${Date.now()}@school.com`,
-          phone: '000000000',
-          address: 'School',
-          class_id: currentClassId.value,
-          gpa: 0,
-          status: 'Active',
-        }
-        
-        await studentService.createStudent(studentData)
-        await loadAttendance()
-        
-        const allStudentsResponse = await studentService.getStudents()
-        const allStudents = allStudentsResponse.data || []
-        const newCount = allStudents.filter(s => Number(s.class_id) === Number(currentClassId.value)).length
-        classStudentCounts.value[currentClassId.value] = newCount
-        
-        newStudentName.value = ''
-        showAlert(`✨ ${name} added to ${currentClassName.value}`, 'success')
-      } catch (error) {
-        console.error('Failed to add student:', error)
-        showAlert('Failed to add student', 'warning')
-      } finally {
-        loading.value = false
-      }
-    }
-
     const markPresent = async (studentId) => {
       loading.value = true
       try {
@@ -660,7 +813,7 @@ export default {
         await loadAttendance()
         
         const student = students.value.find(s => s.id === studentId)
-        showAlert(`✅ ${student?.full_name} marked as ${status.toUpperCase()}`, 'success')
+        showAlert(`${student?.full_name} marked as ${status.toUpperCase()}`, 'success')
       } catch (error) {
         console.error('Failed to mark attendance:', error)
         showAlert('Failed to mark attendance', 'warning')
@@ -677,7 +830,7 @@ export default {
         await loadAttendance()
         
         const student = students.value.find(s => s.id === studentId)
-        showAlert(`⏰ ${student?.full_name} marked as LATE`, 'success')
+        showAlert(`${student?.full_name} marked as LATE`, 'success')
       } catch (error) {
         console.error('Failed to mark attendance:', error)
         showAlert('Failed to mark attendance', 'warning')
@@ -693,7 +846,7 @@ export default {
         await loadAttendance()
         
         const student = students.value.find(s => s.id === studentId)
-        showAlert(`❌ ${student?.full_name} marked as ABSENT`, 'success')
+        showAlert(`${student?.full_name} marked as ABSENT`, 'success')
       } catch (error) {
         console.error('Failed to mark attendance:', error)
         showAlert('Failed to mark attendance', 'warning')
@@ -716,7 +869,7 @@ export default {
           await attendanceAPI.markAttendance(student.id, 'absent', null, attendanceDate.value)
         }
         await loadAttendance()
-        showAlert(`♻️ Attendance reset for ${currentClassName.value}`, 'success')
+        showAlert(`Attendance reset for ${currentClassName.value}`, 'success')
       } catch (error) {
         console.error('Failed to reset attendance:', error)
         showAlert('Failed to reset attendance', 'warning')
@@ -743,7 +896,7 @@ export default {
           await attendanceAPI.markAttendance(student.id, status, nowTime, attendanceDate.value)
         }
         await loadAttendance()
-        showAlert(`✅ All students marked as ${status.toUpperCase()}`, 'success')
+        showAlert(`All students marked as ${status.toUpperCase()}`, 'success')
       } catch (error) {
         console.error('Failed to mark all students:', error)
         showAlert('Failed to mark all students', 'warning')
@@ -764,7 +917,7 @@ export default {
         const exportDate = attendanceDate.value
         
         const worksheetData = [
-          [`📋 ATTENDANCE REPORT - ${className}`],
+          [`ATTENDANCE REPORT - ${className}`],
           [`Date: ${exportDate}`],
           [`Late threshold: After 09:00 AM`],
           [`Generated: ${new Date().toLocaleString()}`],
@@ -798,7 +951,7 @@ export default {
         ws['!cols'] = [{ wch: 5 }, { wch: 15 }, { wch: 25 }, { wch: 8 }, { wch: 12 }, { wch: 15 }]
         XLSX.utils.book_append_sheet(wb, ws, `${className}_Attendance`)
         XLSX.writeFile(wb, `Attendance_${className}_${exportDate}.xlsx`)
-        showAlert(`📎 Exported attendance to Excel`, 'success')
+        showAlert(`Exported attendance to Excel`, 'success')
       } catch (error) {
         console.error('Failed to export:', error)
         showAlert('Failed to export', 'warning')
@@ -817,8 +970,7 @@ export default {
     
     const paginatedFilteredStudents = computed(() => {
       const start = (currentPage.value - 1) * pageSize.value
-      const end = start + pageSize.value
-      return filteredStudents.value.slice(start, end)
+      return filteredStudents.value.slice(start, start + pageSize.value)
     })
 
     const totalStudentsCount = computed(() => stats.value.total)
@@ -877,7 +1029,6 @@ export default {
       currentClassId,
       currentClassName,
       attendanceDate,
-      newStudentName,
       alertMessage,
       alertType,
       searchQuery,
@@ -895,14 +1046,23 @@ export default {
       currentPage,
       truncateText,
       selectClass,
-      addStudent,
       markPresent,
       markLate,
       markAbsent,
       resetCurrentClassAttendance,
       markAllPresentInClass,
       exportAttendanceToExcel,
-      loading
+      loading,
+      // Modal properties
+      showAddModal,
+      studentForm,
+      formErrors,
+      generatedStudentId,
+      openAddStudentModal,
+      closeAddModal,
+      saveNewStudent,
+      getSelectedClassName,
+      getGpaColor
     }
   }
 }
@@ -977,6 +1137,60 @@ button:active {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #818cf8;
+}
+
+/* Form Styles */
+.form-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+.form-label.required::after {
+  content: '*';
+  color: #ef4444;
+  margin-left: 0.25rem;
+}
+.form-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  transition: all 0.2s;
+}
+.form-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  ring: 2px solid #e0e7ff;
+}
+.btn-primary {
+  background-color: #4f46e5;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-primary:hover {
+  background-color: #4338ca;
+}
+.btn-outline {
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-outline:hover {
+  background-color: #f8fafc;
 }
 
 /* Table Row Hover */

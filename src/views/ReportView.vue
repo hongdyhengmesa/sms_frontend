@@ -1,6 +1,41 @@
 <template>
   <div class="space-y-4 md:space-y-6 report-container">
-    <div class="print-header">
+    <!-- Error Alert -->
+    <div v-if="connectionError" class="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
+        <div>
+          <h3 class="font-semibold text-red-800">Connection Error</h3>
+          <p class="text-sm text-red-600">Cannot connect to the server. Please make sure the backend is running.</p>
+        </div>
+        <button @click="retryConnection" class="ml-auto bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg text-sm transition">
+          <i class="fas fa-sync-alt mr-1"></i> Retry
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div v-if="loading" class="flex justify-center items-center py-12">
+      <div class="text-center">
+        <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-gray-500">Loading report data...</p>
+      </div>
+    </div>
+
+    <!-- No Data State -->
+    <div v-if="!loading && !connectionError && studentList.length === 0" class="text-center py-12">
+      <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-file-alt text-4xl text-gray-400"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-700 mb-2">No Report Data Available</h3>
+      <p class="text-gray-500 mb-4">No scores have been added yet.</p>
+      <router-link to="/scores" class="btn-primary inline-flex items-center gap-2">
+        <i class="fas fa-plus-circle"></i> Add Scores First
+      </router-link>
+    </div>
+
+    <!-- Print Header -->
+    <div class="print-header" v-if="!loading && !connectionError && studentList.length > 0">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
         <div>
           <h2 class="text-2xl md:text-3xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
@@ -11,7 +46,7 @@
           </p>
         </div>
 
-        <!-- Actions - Hide on print, responsive -->
+        <!-- Actions -->
         <div class="print-hide flex gap-2 md:gap-3">
           <button class="btn-outline btn text-sm md:text-base" @click="exportPDF">
             <ArrowDownTrayIcon class="w-4 h-4" />
@@ -27,23 +62,26 @@
       </div>
     </div>
 
-    <!-- Student Selector - Responsive -->
-    <div class="print-hide card card-shadow max-w-6xl mx-auto p-4 md:p-6">
+    <!-- Student Selector -->
+    <div class="print-hide card card-shadow max-w-6xl mx-auto p-4 md:p-6" v-if="!loading && !connectionError && studentList.length > 0">
       <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
         <div class="flex-1">
-          <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 block">
+          <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1 md:mb-2 block flex items-center gap-2">
+            <i class="fas fa-user-graduate text-indigo-500"></i>
             Select Student
           </label>
           <div class="relative">
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
             <select 
               v-model="selectedStudentId" 
               @change="fetchReport"
-              class="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm md:text-base"
+              class="w-full pl-10 pr-4 py-2 md:py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm md:text-base appearance-none bg-white cursor-pointer"
             >
               <option v-for="student in studentList" :key="student.id" :value="student.id">
-                {{ truncateText(student.student_name, 25) }} - {{ student.class_name }} (Rank: {{ student.rank }})
+                {{ truncateText(student.student_name, 25) }} - {{ student.class_name }} (Avg: {{ student.average }}%)
               </option>
             </select>
+            <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
           </div>
         </div>
         
@@ -54,7 +92,7 @@
             class="btn-outline btn px-3 md:px-4 text-sm md:text-base"
             :class="{ 'opacity-50 cursor-not-allowed': !hasPreviousStudent }"
           >
-            ← Prev
+            <i class="fas fa-chevron-left mr-1"></i> Prev
           </button>
           <button 
             @click="nextStudent" 
@@ -62,53 +100,81 @@
             class="btn-outline btn px-3 md:px-4 text-sm md:text-base"
             :class="{ 'opacity-50 cursor-not-allowed': !hasNextStudent }"
           >
-            Next →
+            Next <i class="fas fa-chevron-right ml-1"></i>
           </button>
         </div>
       </div>
 
-      <!-- Class Summary Stats - Responsive Grid -->
+      <!-- Class Summary Stats -->
       <div class="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-100">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-          <div class="text-center">
-            <p class="text-[10px] md:text-xs text-gray-500 uppercase">Total Students</p>
-            <p class="text-xl md:text-2xl font-bold text-gray-800">{{ classStats.totalStudents }}</p>
+          <div class="stat-card-mini">
+            <div class="stat-icon-mini bg-blue-100">
+              <i class="fas fa-users text-blue-600"></i>
+            </div>
+            <div>
+              <p class="stat-label-mini">Total Students</p>
+              <p class="stat-value-mini">{{ classStats.totalStudents }}</p>
+            </div>
           </div>
-          <div class="text-center">
-            <p class="text-[10px] md:text-xs text-gray-500 uppercase">Class Average</p>
-            <p class="text-xl md:text-2xl font-bold text-green-600">{{ classStats.classAverage }}%</p>
+          <div class="stat-card-mini">
+            <div class="stat-icon-mini bg-green-100">
+              <i class="fas fa-chart-line text-green-600"></i>
+            </div>
+            <div>
+              <p class="stat-label-mini">Class Average</p>
+              <p class="stat-value-mini text-green-600">{{ classStats.classAverage }}%</p>
+            </div>
           </div>
-          <div class="text-center">
-            <p class="text-[10px] md:text-xs text-gray-500 uppercase">Highest Score</p>
-            <p class="text-xl md:text-2xl font-bold text-amber-600">{{ classStats.highestScore }}%</p>
+          <div class="stat-card-mini">
+            <div class="stat-icon-mini bg-amber-100">
+              <i class="fas fa-trophy text-amber-600"></i>
+            </div>
+            <div>
+              <p class="stat-label-mini">Highest Score</p>
+              <p class="stat-value-mini text-amber-600">{{ classStats.highestScore }}%</p>
+            </div>
           </div>
-          <div class="text-center">
-            <p class="text-[10px] md:text-xs text-gray-500 uppercase">Passing Rate</p>
-            <p class="text-xl md:text-2xl font-bold text-blue-600">{{ classStats.passingRate }}%</p>
+          <div class="stat-card-mini">
+            <div class="stat-icon-mini bg-purple-100">
+              <i class="fas fa-check-circle text-purple-600"></i>
+            </div>
+            <div>
+              <p class="stat-label-mini">Passing Rate</p>
+              <p class="stat-value-mini text-purple-600">{{ classStats.passingRate }}%</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Report Card - Responsive -->
-    <div ref="reportRef" class="card card-shadow max-w-6xl mx-auto overflow-hidden">
-      <!-- HEADER with responsive padding -->
-      <div class="p-4 md:p-8" style="background:linear-gradient(135deg,#1e3a8a 0%,#312e81 60%,#1e1b4b 100%);">
-        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-          <!-- School Info -->
-          <div class="text-center sm:text-left">
-            <p class="text-[10px] md:text-xs text-blue-300 uppercase tracking-widest mb-1 md:mb-2">
-              Official Academic Report
-            </p>
-            <h2 class="font-serif text-2xl md:text-4xl text-white mb-0.5 md:mb-1">
-              Soab Secondary School
-            </h2>
-            <p class="text-xs md:text-sm text-blue-200">
-              Soab, Kratie
-            </p>
-            <p class="text-[10px] md:text-xs text-blue-300 mt-1 md:mt-2 print-date">
-              Generated: {{ currentDate }}
-            </p>
+    <!-- Report Card -->
+    <div ref="reportRef" class="card card-shadow max-w-6xl mx-auto overflow-hidden transition-all duration-300 hover:shadow-2xl" v-if="!loading && !connectionError && studentList.length > 0 && score.student_name">
+      <!-- Header -->
+      <div class="report-header p-4 md:p-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl"></div>
+        
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 relative z-10">
+          <!-- School Logo & Info -->
+          <div class="flex items-center gap-4">
+            <div class="school-logo">
+              <i class="fas fa-graduation-cap text-3xl text-white/80"></i>
+            </div>
+            <div class="text-center sm:text-left">
+              <p class="text-[10px] md:text-xs text-blue-300 uppercase tracking-widest mb-1 md:mb-2">
+                Official Academic Report
+              </p>
+              <h2 class="font-serif text-2xl md:text-4xl text-white mb-0.5 md:mb-1">
+                Soab Secondary School
+              </h2>
+              <p class="text-xs md:text-sm text-blue-200">
+                <i class="fas fa-map-marker-alt mr-1"></i> Soab, Kratie
+              </p>
+              <p class="text-[10px] md:text-xs text-blue-300 mt-1 md:mt-2 print-date">
+                <i class="far fa-calendar-alt mr-1"></i> Generated: {{ currentDate }}
+              </p>
+            </div>
           </div>
 
           <!-- Average Score -->
@@ -116,79 +182,115 @@
             <p class="text-[10px] md:text-xs text-blue-300 mb-1 md:mb-2">
               Semester Average
             </p>
-            <div class="inline-flex items-center gap-1 md:gap-2 bg-white/10 backdrop-blur border border-white/20 rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-3">
+            <div class="average-score-card">
               <div>
-                <p class="text-2xl md:text-4xl font-extrabold text-white leading-none">
-                  {{ score.average }}%
-                </p>
-                <p class="text-[9px] md:text-[11px] text-blue-200 mt-0.5">
-                  {{ performanceText }}
-                </p>
+                <p class="average-score-value">{{ score.average }}%</p>
+                <p class="average-score-label">{{ performanceText }}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- BODY with responsive padding -->
-      <div class="p-4 md:p-8">
-        <!-- Student Info - Responsive Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 mb-5 md:mb-8 p-3 md:p-5 bg-gray-50 rounded-xl md:rounded-2xl">
-          <div>
-            <p class="info-label">Student Name</p>
-            <p class="info-value text-sm md:text-base">{{ score.student_name }}</p>
+      <!-- Body -->
+      <div class="p-4 md:p-8 bg-white">
+        <!-- Student Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-6 md:mb-8">
+          <div class="info-card">
+            <div class="info-card-icon bg-indigo-100">
+              <i class="fas fa-user text-indigo-600"></i>
+            </div>
+            <div>
+              <p class="info-card-label">Student Name</p>
+              <p class="info-card-value">{{ score.student_name }}</p>
+            </div>
           </div>
-          <div>
-            <p class="info-label">Class</p>
-            <p class="info-value text-sm md:text-base">{{ score.class_name }}</p>
+          <div class="info-card">
+            <div class="info-card-icon bg-blue-100">
+              <i class="fas fa-building text-blue-600"></i>
+            </div>
+            <div>
+              <p class="info-card-label">Class</p>
+              <p class="info-card-value">{{ score.class_name }}</p>
+            </div>
           </div>
-          <div>
-            <p class="info-label">Gender</p>
-            <p class="info-value text-sm md:text-base">{{ score.gender }}</p>
+          <div class="info-card">
+            <div class="info-card-icon bg-pink-100">
+              <i class="fas fa-venus-mars text-pink-600"></i>
+            </div>
+            <div>
+              <p class="info-card-label">Gender</p>
+              <p class="info-card-value">{{ score.gender || 'Not specified' }}</p>
+            </div>
           </div>
-          <div>
-            <p class="info-label">Grade</p>
-            <p class="info-value text-sm md:text-base">{{ score.grade }}</p>
+          <div class="info-card">
+            <div class="info-card-icon bg-green-100">
+              <i class="fas fa-star text-green-600"></i>
+            </div>
+            <div>
+              <p class="info-card-label">Grade</p>
+              <p class="info-card-value"><span class="grade-badge" :class="getGradeBadgeClass(score.grade)">{{ score.grade }}</span></p>
+            </div>
           </div>
-          <div>
-            <p class="info-label">Rank</p>
-            <p class="info-value text-sm md:text-base">{{ score.rank }} out of {{ classStats.totalStudents }}</p>
+          <div class="info-card">
+            <div class="info-card-icon bg-amber-100">
+              <i class="fas fa-trophy text-amber-600"></i>
+            </div>
+            <div>
+              <p class="info-card-label">Rank</p>
+              <p class="info-card-value">{{ score.rank || 'N/A' }} / {{ classStats.totalStudents }}</p>
+            </div>
           </div>
-          <div>
-            <p class="info-label">Total Score</p>
-            <p class="info-value text-sm md:text-base">{{ score.total }}</p>
+          <div class="info-card">
+            <div class="info-card-icon bg-purple-100">
+              <i class="fas fa-calculator text-purple-600"></i>
+            </div>
+            <div>
+              <p class="info-card-label">Total Score</p>
+              <p class="info-card-value">{{ score.total }}</p>
+            </div>
           </div>
         </div>
 
-        <!-- SUBJECT TABLE - Responsive -->
-        <h3 class="text-xs md:text-sm font-bold text-gray-700 mb-2 md:mb-3">Academic Results</h3>
-        <div class="overflow-x-auto rounded-xl border border-gray-100">
+        <!-- Subject Table -->
+        <h3 class="text-sm md:text-base font-bold text-gray-800 mb-3 md:mb-4 flex items-center gap-2">
+          <i class="fas fa-table-list text-indigo-500"></i>
+          Academic Results
+        </h3>
+        
+        <div class="overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
           <table class="data-table w-full text-xs md:text-sm">
             <thead>
-              <tr>
-                <th class="px-2 md:px-5 py-2 md:py-4">Subject</th>
-                <th class="px-2 md:px-5 py-2 md:py-4">Max</th>
-                <th class="px-2 md:px-5 py-2 md:py-4">Score</th>
-                <th class="px-2 md:px-5 py-2 md:py-4">%</th>
-                <th class="px-2 md:px-5 py-2 md:py-4">Status</th>
-                <th class="print-hide-column px-2 md:px-5 py-2 md:py-4">Performance</th>
+              <tr class="bg-gradient-to-r from-gray-50 to-indigo-50/30">
+                <th class="px-3 md:px-5 py-3 md:py-4 text-left">Subject</th>
+                <th class="px-3 md:px-5 py-3 md:py-4 text-center">Max Score</th>
+                <th class="px-3 md:px-5 py-3 md:py-4 text-center">Score</th>
+                <th class="px-3 md:px-5 py-3 md:py-4 text-center">Percentage</th>
+                <th class="px-3 md:px-5 py-3 md:py-4 text-center">Status</th>
+                <th class="print-hide-column px-3 md:px-5 py-3 md:py-4 text-center">Performance</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="subject in subjects" :key="subject.name" class="border-t border-gray-100">
-                <td class="subject-name px-2 md:px-5 py-2 md:py-4 font-semibold">{{ subject.name }}</td>
-                <td class="px-2 md:px-5 py-2 md:py-4">{{ subject.maxScore }}</td>
-                <td class="px-2 md:px-5 py-2 md:py-4 font-bold">{{ subject.score }}</td>
-                <td class="px-2 md:px-5 py-2 md:py-4">{{ ((subject.score / subject.maxScore) * 100).toFixed(1) }}%</td>
-                <td class="px-2 md:px-5 py-2 md:py-4">
-                  <span class="badge text-[10px] md:text-xs" :class="passClass(subject.score, subject.maxScore)">
+              <tr v-for="subject in subjects" :key="subject.name" class="border-t border-gray-100 hover:bg-gray-50 transition">
+                <td class="px-3 md:px-5 py-3 md:py-4 font-semibold text-gray-800">
+                  <i class="fas fa-book-open text-indigo-400 mr-2"></i>
+                  {{ subject.name }}
+                </td>
+                <td class="px-3 md:px-5 py-3 md:py-4 text-center font-mono">{{ subject.maxScore }}</td>
+                <td class="px-3 md:px-5 py-3 md:py-4 text-center font-bold text-gray-800">{{ subject.score }}</td>
+                <td class="px-3 md:px-5 py-3 md:py-4 text-center font-mono">
+                  {{ ((subject.score / subject.maxScore) * 100).toFixed(1) }}%
+                </td>
+                <td class="px-3 md:px-5 py-3 md:py-4 text-center">
+                  <span class="status-badge" :class="passClass(subject.score, subject.maxScore)">
+                    <i :class="passClass(subject.score, subject.maxScore) === 'badge-green' ? 'fas fa-check-circle' : 'fas fa-times-circle'" class="mr-1"></i>
                     {{ passText(subject.score, subject.maxScore) }}
                   </span>
                 </td>
-                <td class="print-hide-column px-2 md:px-5 py-2 md:py-4">
-                  <div class="w-16 md:w-24 bg-gray-200 rounded-full h-1.5 md:h-2">
+                <td class="print-hide-column px-3 md:px-5 py-3 md:py-4">
+                  <div class="progress-bar">
                     <div 
-                      class="h-1.5 md:h-2 rounded-full transition-all"
+                      class="progress-bar-fill"
                       :class="getProgressBarClass(subject.score, subject.maxScore)"
                       :style="{ width: `${(subject.score / subject.maxScore) * 100}%` }"
                     ></div>
@@ -199,24 +301,53 @@
           </table>
         </div>
 
-        <!-- SUMMARY CARDS - Responsive Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mt-5 md:mt-8">
-          <div class="summary-card bg-green-50 rounded-xl md:rounded-2xl p-3 md:p-5 text-center">
-            <p class="summary-value text-green-600 text-xl md:text-3xl font-extrabold mb-0.5 md:mb-1">{{ score.grade }}</p>
-            <p class="summary-label text-[10px] md:text-xs text-gray-500 uppercase tracking-wide">Final Grade</p>
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mt-6 md:mt-8">
+          <div class="summary-card-v2 summary-card-green">
+            <div class="summary-card-icon">
+              <i class="fas fa-award text-2xl"></i>
+            </div>
+            <div>
+              <p class="summary-card-label">Final Grade</p>
+              <p class="summary-card-value text-green-600">{{ score.grade }}</p>
+            </div>
           </div>
-          <div class="summary-card bg-blue-50 rounded-xl md:rounded-2xl p-3 md:p-5 text-center">
-            <p class="summary-value text-blue-600 text-xl md:text-3xl font-extrabold mb-0.5 md:mb-1">#{{ score.rank }}</p>
-            <p class="summary-label text-[10px] md:text-xs text-gray-500 uppercase tracking-wide">Class Rank</p>
+          <div class="summary-card-v2 summary-card-blue">
+            <div class="summary-card-icon">
+              <i class="fas fa-chart-simple text-2xl"></i>
+            </div>
+            <div>
+              <p class="summary-card-label">Class Rank</p>
+              <p class="summary-card-value text-blue-600">#{{ score.rank || 'N/A' }}</p>
+            </div>
           </div>
-          <div class="summary-card bg-purple-50 rounded-xl md:rounded-2xl p-3 md:p-5 text-center">
-            <p class="summary-value text-purple-600 text-xl md:text-3xl font-extrabold mb-0.5 md:mb-1">{{ score.average }}%</p>
-            <p class="summary-label text-[10px] md:text-xs text-gray-500 uppercase tracking-wide">Average</p>
+          <div class="summary-card-v2 summary-card-purple">
+            <div class="summary-card-icon">
+              <i class="fas fa-percent text-2xl"></i>
+            </div>
+            <div>
+              <p class="summary-card-label">Average Score</p>
+              <p class="summary-card-value text-purple-600">{{ score.average }}%</p>
+            </div>
           </div>
-          <div class="summary-card bg-amber-50 rounded-xl md:rounded-2xl p-3 md:p-5 text-center">
-            <p class="summary-value text-amber-600 text-xl md:text-3xl font-extrabold mb-0.5 md:mb-1">{{ score.total }}</p>
-            <p class="summary-label text-[10px] md:text-xs text-gray-500 uppercase tracking-wide">Total Score</p>
+          <div class="summary-card-v2 summary-card-amber">
+            <div class="summary-card-icon">
+              <i class="fas fa-star text-2xl"></i>
+            </div>
+            <div>
+              <p class="summary-card-label">Total Points</p>
+              <p class="summary-card-value text-amber-600">{{ score.total }}</p>
+            </div>
           </div>
+        </div>
+
+        <!-- Performance Message -->
+        <div class="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl text-center">
+          <p class="text-sm text-gray-700">
+            <i class="fas fa-quote-left text-indigo-400 mr-2"></i>
+            {{ getPerformanceMessage() }}
+            <i class="fas fa-quote-right text-indigo-400 ml-2"></i>
+          </p>
         </div>
       </div>
     </div>
@@ -235,6 +366,8 @@ const reportRef = ref(null)
 const selectedStudentId = ref(null)
 const studentList = ref([])
 const currentDate = ref('')
+const loading = ref(false)
+const connectionError = ref(false)
 const score = ref({
   student_name: '',
   class_name: '',
@@ -253,6 +386,9 @@ const score = ref({
   rank: '',
 })
 
+// API URL from environment
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
 // Helper to truncate text
 const truncateText = (text, length) => {
   if (!text) return '—'
@@ -263,14 +399,14 @@ const truncateText = (text, length) => {
 // COMPUTED PROPERTIES
 // ======================
 const subjects = computed(() => [
-  { name: 'Mathematics', score: score.value.math, maxScore: 100 },
-  { name: 'Khmer', score: score.value.khmer, maxScore: 100 },
-  { name: 'Physics', score: score.value.physics, maxScore: 50 },
-  { name: 'Chemistry', score: score.value.chemistry, maxScore: 50 },
-  { name: 'Biology', score: score.value.biology, maxScore: 50 },
-  { name: 'Geography', score: score.value.geography, maxScore: 50 },
-  { name: 'History', score: score.value.history, maxScore: 50 },
-  { name: 'English', score: score.value.english, maxScore: 50 }
+  { name: 'Mathematics', score: score.value.math || 0, maxScore: 100 },
+  { name: 'Khmer', score: score.value.khmer || 0, maxScore: 100 },
+  { name: 'Physics', score: score.value.physics || 0, maxScore: 50 },
+  { name: 'Chemistry', score: score.value.chemistry || 0, maxScore: 50 },
+  { name: 'Biology', score: score.value.biology || 0, maxScore: 50 },
+  { name: 'Geography', score: score.value.geography || 0, maxScore: 50 },
+  { name: 'History', score: score.value.history || 0, maxScore: 50 },
+  { name: 'English', score: score.value.english || 0, maxScore: 50 }
 ])
 
 const classStats = computed(() => {
@@ -278,11 +414,11 @@ const classStats = computed(() => {
     return { totalStudents: 0, classAverage: 0, highestScore: 0, passingRate: 0 }
   }
   
-  const averages = studentList.value.map(s => s.average)
-  const classAverage = (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(1)
-  const highestScore = Math.max(...averages)
-  const passingCount = studentList.value.filter(s => s.average >= 60).length
-  const passingRate = ((passingCount / studentList.value.length) * 100).toFixed(1)
+  const averages = studentList.value.map(s => s.average || 0)
+  const classAverage = averages.length > 0 ? (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(1) : 0
+  const highestScore = averages.length > 0 ? Math.max(...averages) : 0
+  const passingCount = studentList.value.filter(s => (s.average || 0) >= 60).length
+  const passingRate = studentList.value.length > 0 ? ((passingCount / studentList.value.length) * 100).toFixed(1) : 0
   
   return {
     totalStudents: studentList.value.length,
@@ -303,10 +439,11 @@ const hasNextStudent = computed(() => {
 })
 
 const performanceText = computed(() => {
-  if (score.value.average >= 90) return 'Excellent'
-  if (score.value.average >= 80) return 'Very Good'
-  if (score.value.average >= 70) return 'Good'
-  if (score.value.average >= 60) return 'Average'
+  const avg = score.value.average || 0
+  if (avg >= 90) return 'Excellent'
+  if (avg >= 80) return 'Very Good'
+  if (avg >= 70) return 'Good'
+  if (avg >= 60) return 'Average'
   return 'Needs Improvement'
 })
 
@@ -331,30 +468,89 @@ const getProgressBarClass = (value, max) => {
   return 'bg-red-500'
 }
 
+const getGradeBadgeClass = (grade) => {
+  switch(grade) {
+    case 'A': return 'grade-a'
+    case 'B': return 'grade-b'
+    case 'C': return 'grade-c'
+    case 'D': return 'grade-d'
+    default: return 'grade-f'
+  }
+}
+
+const getPerformanceMessage = () => {
+  const avg = score.value.average || 0
+  if (avg >= 90) {
+    return 'Outstanding performance! You have excelled in all subjects. Keep up the great work!'
+  } else if (avg >= 80) {
+    return 'Very good performance! You are doing well. A little more effort will make you excellent!'
+  } else if (avg >= 70) {
+    return 'Good performance! You are on the right track. Keep working hard to improve further.'
+  } else if (avg >= 60) {
+    return 'Satisfactory performance. You have passed, but there is room for improvement.'
+  } else {
+    return 'Needs improvement. Please work harder next semester and seek help from teachers.'
+  }
+}
+
+const retryConnection = () => {
+  fetchAllStudents()
+}
+
 // ======================
 // FETCH DATA
 // ======================
 const fetchAllStudents = async () => {
+  loading.value = true
+  connectionError.value = false
+  
   try {
-    const response = await axios.get('http://localhost:3000/scores')
-    studentList.value = response.data
+    const response = await axios.get(`${API_URL}/scores`)
+    studentList.value = response.data || []
+    
     if (studentList.value.length > 0 && !selectedStudentId.value) {
       selectedStudentId.value = studentList.value[0].id
       await fetchReport()
     }
   } catch (error) {
     console.error('Failed to fetch students:', error)
+    connectionError.value = true
+    studentList.value = []
+  } finally {
+    loading.value = false
   }
 }
 
 const fetchReport = async () => {
   if (!selectedStudentId.value) return
   
+  loading.value = true
   try {
-    const response = await axios.get(`http://localhost:3000/scores/${selectedStudentId.value}`)
-    score.value = response.data
+    const response = await axios.get(`${API_URL}/scores/${selectedStudentId.value}`)
+    score.value = response.data || {
+      student_name: '',
+      class_name: '',
+      gender: '',
+      math: 0,
+      khmer: 0,
+      physics: 0,
+      chemistry: 0,
+      biology: 0,
+      geography: 0,
+      history: 0,
+      english: 0,
+      total: 0,
+      average: 0,
+      grade: '',
+      rank: '',
+    }
   } catch (error) {
     console.error('Report Fetch Error:', error)
+    if (error.code === 'ERR_NETWORK') {
+      connectionError.value = true
+    }
+  } finally {
+    loading.value = false
   }
 }
 
@@ -401,277 +597,422 @@ const setCurrentDate = () => {
 }
 
 onMounted(() => {
-  fetchAllStudents()
   setCurrentDate()
+  fetchAllStudents()
 })
 </script>
 
 <style scoped>
-/* Custom breakpoint for extra small screens (480px) */
+/* Custom breakpoint */
 @media (min-width: 480px) {
-  .xs\:inline {
-    display: inline;
-  }
-  .xs\:hidden {
-    display: none;
-  }
+  .xs\:inline { display: inline; }
+  .xs\:hidden { display: none; }
 }
 
+/* Button Styles */
 .btn {
-  @apply px-3 md:px-5 py-2 md:py-3 rounded-xl md:rounded-2xl font-bold flex items-center gap-1.5 md:gap-2 transition-all;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .btn {
+    padding: 0.75rem 1.5rem;
+  }
 }
 
 .btn-primary {
-  @apply bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:shadow-lg transform hover:scale-105;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
 }
 
 .btn-outline {
-  @apply border border-gray-200 bg-white text-gray-700 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #4b5563;
 }
 
+.btn-outline:hover {
+  background: #f8fafc;
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+/* Card Styles */
 .card {
-  @apply bg-white rounded-2xl md:rounded-3xl border border-gray-100;
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
 }
 
 .card-shadow {
-  @apply shadow-xl;
+  box-shadow: 0 10px 40px -15px rgba(0, 0, 0, 0.15);
 }
 
-.info-label {
-  @apply text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5 md:mb-1;
+/* Report Header */
+.report-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #312e81 50%, #1e1b4b 100%);
+  position: relative;
 }
 
-.info-value {
-  @apply text-xs md:text-sm font-semibold text-gray-800;
+.school-logo {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
 }
 
+@media (min-width: 768px) {
+  .school-logo {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+.average-score-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .average-score-card {
+    gap: 1rem;
+    border-radius: 1.5rem;
+    padding: 1rem 1.5rem;
+  }
+}
+
+.average-score-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+}
+
+@media (min-width: 768px) {
+  .average-score-value {
+    font-size: 2.5rem;
+  }
+}
+
+.average-score-label {
+  font-size: 0.7rem;
+  color: #bfdbfe;
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .average-score-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* Info Cards */
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.info-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .info-card-icon {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.info-card-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 0.125rem;
+}
+
+@media (min-width: 768px) {
+  .info-card-label {
+    font-size: 0.7rem;
+  }
+}
+
+.info-card-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+@media (min-width: 768px) {
+  .info-card-value {
+    font-size: 1rem;
+  }
+}
+
+/* Grade Badge */
+.grade-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.grade-a { background: #dcfce7; color: #166534; }
+.grade-b { background: #dbeafe; color: #1e40af; }
+.grade-c { background: #fef3c7; color: #92400e; }
+.grade-d { background: #fed7aa; color: #9a3412; }
+.grade-f { background: #fee2e2; color: #991b1b; }
+
+/* Table Styles */
 .data-table {
-  @apply min-w-full;
+  width: 100%;
 }
 
 .data-table thead {
-  @apply bg-gray-50 text-gray-500 uppercase text-[10px] md:text-xs;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
 }
 
 .data-table th {
-  @apply px-2 md:px-5 py-2 md:py-4 text-left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
 }
 
-.data-table td {
-  @apply px-2 md:px-5 py-2 md:py-4;
+@media (min-width: 768px) {
+  .data-table th {
+    font-size: 0.75rem;
+  }
 }
 
-.subject-name {
-  @apply font-semibold text-gray-800 text-xs md:text-sm;
+/* Status Badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
-.badge {
-  @apply px-2 md:px-3 py-0.5 md:py-1 rounded-full font-bold;
+@media (min-width: 768px) {
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 1rem;
+  }
 }
 
 .badge-green {
-  @apply bg-green-100 text-green-700;
+  background: #dcfce7;
+  color: #166534;
 }
 
 .badge-red {
-  @apply bg-red-100 text-red-700;
+  background: #fee2e2;
+  color: #991b1b;
 }
 
-.summary-card {
-  @apply rounded-xl md:rounded-2xl p-3 md:p-5 text-center transition-all hover:scale-105;
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  max-width: 120px;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
 }
 
-.summary-value {
-  @apply text-lg md:text-3xl font-extrabold mb-0.5 md:mb-1;
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease;
 }
 
-.summary-label {
-  @apply text-[9px] md:text-xs text-gray-500 uppercase tracking-wide;
+/* Summary Cards */
+.summary-card-v2 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.summary-card-v2:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card-green {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+}
+
+.summary-card-blue {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+
+.summary-card-purple {
+  background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+}
+
+.summary-card-amber {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+}
+
+.summary-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.summary-card-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.summary-card-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+@media (min-width: 768px) {
+  .summary-card-value {
+    font-size: 1.5rem;
+  }
+}
+
+/* Mini Stat Cards */
+.stat-card-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.stat-card-mini:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.stat-icon-mini {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-label-mini {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.stat-value-mini {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+/* Animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 0.8s linear infinite;
 }
 
 /* Print Styles */
 @media print {
-  /* Hide admin sidebar - this targets common admin sidebar classes */
-  aside,
-  .sidebar,
-  .admin-sidebar,
-  [class*="sidebar"],
-  [class*="Sidebar"],
-  nav:not(.print-friendly),
-  .main-nav,
-  .admin-nav,
-  .v-navigation-drawer,
-  .v-app-bar,
-  .el-aside,
-  .ant-layout-sider {
-    display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
-    position: absolute !important;
-  }
-
-  /* Adjust main content to take full width */
-  main,
-  .main-content,
-  .content-wrapper,
-  .v-main,
-  .el-main,
-  .ant-layout-content {
-    margin-left: 0 !important;
-    padding-left: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  /* Hide print-specific elements */
   .print-hide {
     display: none !important;
   }
-
+  
   .print-hide-column {
     display: none !important;
   }
-
-  /* Show print-specific elements */
-  .print-header {
-    display: block !important;
-  }
-
-  .print-date {
-    display: block !important;
-  }
-
-  /* Optimize report card for printing */
-  .report-container {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
+  
   .card {
     box-shadow: none !important;
     border: 1px solid #e5e7eb !important;
     margin: 0 !important;
-    page-break-inside: avoid;
   }
-
-  /* Ensure colors print well */
+  
   * {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
-
-  /* Page breaks */
-  .page-break {
-    page-break-before: always;
-  }
-
-  /* Typography for print */
-  body {
-    font-size: 12pt;
-    line-height: 1.4;
-  }
-
-  h2 {
-    font-size: 18pt;
-  }
-
-  .summary-value {
-    font-size: 16pt;
-  }
-
-  /* Remove shadows and backgrounds for print */
-  .card-shadow {
-    box-shadow: none !important;
-  }
-
-  .bg-gradient-to-r {
-    background: #1e3a8a !important;
-  }
-
-  /* Reset transforms */
-  * {
-    transform: none !important;
-  }
-}
-
-/* Disable hover effects on print */
-@media print {
-  .summary-card:hover {
-    transform: none !important;
-  }
-  
-  .btn:hover {
-    transform: none !important;
-  }
 }
 </style>
 
-<!-- Global style to hide sidebar when printing -->
+<!-- Global print styles -->
 <style>
-/* This global style ensures admin sidebar is hidden during print */
 @media print {
-  /* Target common Vue.js/Vuetify/Element UI sidebar classes */
-  .v-navigation-drawer--active,
-  .el-aside,
-  .ant-layout-sider,
-  .sidebar-container,
-  .side-bar,
-  .app-sidebar,
-  .navigation,
-  [role="navigation"],
-  header:not(.print-friendly),
-  .header:not(.print-friendly),
-  .app-header:not(.print-friendly),
-  .top-nav:not(.print-friendly) {
+  aside, .sidebar, nav:not(.print-friendly), header:not(.print-friendly) {
     display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    min-width: 0 !important;
-    max-width: 0 !important;
-    flex: 0 0 0 !important;
-    position: fixed !important;
-    left: -9999px !important;
   }
-
-  /* Adjust main content area */
-  main,
-  .main-content,
-  .app-main,
-  .content-wrapper,
-  .v-main,
-  .el-main,
-  .ant-layout-content {
+  
+  main, .main-content {
     margin-left: 0 !important;
-    padding-left: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  /* Fix layout containers */
-  .flex,
-  .row,
-  .container,
-  .v-container {
-    display: block !important;
-  }
-
-  /* Ensure body takes full width */
-  html, body {
-    width: 100% !important;
-    margin: 0 !important;
     padding: 0 !important;
-    overflow-x: visible !important;
+    width: 100% !important;
   }
-}
-
-/* Class to detect print mode */
-body.printing {
-  overflow: auto !important;
-}
-
-body.printing .print-hide {
-  display: none !important;
+  
+  body.printing {
+    overflow: auto !important;
+  }
 }
 </style>

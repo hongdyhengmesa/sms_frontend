@@ -203,7 +203,6 @@ import {
   onMounted,
   nextTick
 } from 'vue'
-import axios from 'axios'
 import {
   Line,
   Doughnut,
@@ -226,6 +225,7 @@ import {
   ChartBarIcon,
 } from '@heroicons/vue/24/outline'
 import StatCard from '../components/StatCard.vue'
+import api from '../services/api' // Import your API service
 
 // ======================
 // REGISTER CHART COMPONENTS
@@ -267,16 +267,24 @@ const fetchDashboard = async () => {
       studentResponse,
       classResponse,
     ] = await Promise.all([
-      axios.get('/scores'),
-      axios.get('/teachers'),
-      axios.get('/students'),
-      axios.get('/classes'),
+      api.get('/scores'),      // Use api instead of axios
+      api.get('/teachers'),    // Use api instead of axios
+      api.get('/students'),    // Use api instead of axios
+      api.get('/classes'),     // Use api instead of axios
     ])
 
-    scores.value = scoreResponse.data || []
-    teachers.value = teacherResponse.data || []
-    students.value = studentResponse.data || []
-    classes.value = classResponse.data || []
+    // Ensure data is always an array
+    scores.value = Array.isArray(scoreResponse.data) ? scoreResponse.data : []
+    teachers.value = Array.isArray(teacherResponse.data) ? teacherResponse.data : []
+    students.value = Array.isArray(studentResponse.data) ? studentResponse.data : []
+    classes.value = Array.isArray(classResponse.data) ? classResponse.data : []
+
+    console.log('Dashboard data loaded:', {
+      scores: scores.value.length,
+      teachers: teachers.value.length,
+      students: students.value.length,
+      classes: classes.value.length
+    })
 
     // Refresh charts after data loads
     await nextTick()
@@ -285,9 +293,14 @@ const fetchDashboard = async () => {
     
   } catch (error) {
     console.error('Dashboard Error:', error)
-    if(error.code === 'ERR_NETWORK'){
-      console.error('Cannot connect to backend.')
+    if (error.code === 'ERR_NETWORK') {
+      console.error('Cannot connect to backend. Make sure it\'s running on port 3000')
     }
+    // Set empty arrays on error
+    scores.value = []
+    teachers.value = []
+    students.value = []
+    classes.value = []
   } finally {
     loading.value = false
   }
@@ -298,12 +311,17 @@ onMounted(() => {
 })
 
 // ======================
-// UNIQUE STUDENTS (by name to avoid duplicates)
+// UNIQUE STUDENTS (with safety check)
 // ======================
 const uniqueStudents = computed(() => {
+  // Safety check
+  if (!Array.isArray(scores.value) || scores.value.length === 0) {
+    return []
+  }
+  
   const map = new Map()
   scores.value.forEach((s) => {
-    if (s.student_name && !map.has(s.student_name)) {
+    if (s && s.student_name && !map.has(s.student_name)) {
       map.set(s.student_name, s)
     }
   })
@@ -311,33 +329,38 @@ const uniqueStudents = computed(() => {
 })
 
 // ======================
-// STATS COMPUTED
+// STATS COMPUTED (with safety checks)
 // ======================
 const totalStudents = computed(() => {
-  return students.value.length
+  return Array.isArray(students.value) ? students.value.length : 0
 })
 
 const totalTeachers = computed(() => {
-  return teachers.value.length
+  return Array.isArray(teachers.value) ? teachers.value.length : 0
 })
 
 const totalClasses = computed(() => {
-  return classes.value.length
+  return Array.isArray(classes.value) ? classes.value.length : 0
 })
 
 const averageScore = computed(() => {
-  if (!scores.value.length) return 0
-  const total = scores.value.reduce((sum, s) => sum + (Number(s.average) || 0), 0)
+  if (!Array.isArray(scores.value) || !scores.value.length) return 0
+  const total = scores.value.reduce((sum, s) => sum + (Number(s?.average) || 0), 0)
   return (total / scores.value.length).toFixed(1)
 })
 
 // ======================
-// TOP STUDENTS
+// TOP STUDENTS (with safety check)
 // ======================
 const topStudents = computed(() => {
-  return [...uniqueStudents.value]
-    .filter(s => s.average)
-    .sort((a, b) => (b.average || 0) - (a.average || 0))
+  const unique = uniqueStudents.value
+  if (!Array.isArray(unique) || unique.length === 0) {
+    return []
+  }
+  
+  return [...unique]
+    .filter(s => s && s.average)
+    .sort((a, b) => (b?.average || 0) - (a?.average || 0))
     .slice(0, 5)
     .map((s) => ({
       id: s.id,
@@ -350,11 +373,15 @@ const topStudents = computed(() => {
 })
 
 // ======================
-// RECENT ACTIVITIES
+// RECENT ACTIVITIES (with safety check)
 // ======================
 const activities = computed(() => {
+  if (!Array.isArray(scores.value) || scores.value.length === 0) {
+    return []
+  }
+  
   return [...scores.value]
-    .filter(s => s.student_name && s.grade)
+    .filter(s => s && s.student_name && s.grade)
     .slice(0, 5)
     .map((s) => ({
       id: s.id,
@@ -371,7 +398,6 @@ const activities = computed(() => {
 // ======================
 const lineData = computed(() => ({
   labels: topStudents.value.map(s => {
-    // Truncate long names
     const name = s.name
     return name.length > 12 ? name.substring(0, 10) + '...' : name
   }),
@@ -443,8 +469,13 @@ const lineOpts = {
 // ======================
 const gradeCounts = computed(() => {
   const counts = { A: 0, B: 0, C: 0, D: 0, F: 0 }
+  
+  if (!Array.isArray(scores.value)) {
+    return counts
+  }
+  
   scores.value.forEach((s) => {
-    if (s.grade && counts[s.grade] !== undefined) {
+    if (s && s.grade && counts[s.grade] !== undefined) {
       counts[s.grade]++
     }
   })
@@ -452,6 +483,7 @@ const gradeCounts = computed(() => {
 })
 
 const totalGradeCount = computed(() => {
+  if (!Array.isArray(scores.value)) return 0
   return Object.values(gradeCounts.value).reduce((a, b) => a + b, 0)
 })
 
